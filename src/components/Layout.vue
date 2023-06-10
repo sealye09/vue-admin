@@ -10,7 +10,7 @@
       >
         <div class="logo">
           <img
-            src="../../public/vue.svg"
+            src="@/../public/vue.svg"
             alt="logo"
           />
           <span

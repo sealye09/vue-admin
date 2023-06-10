@@ -28,7 +28,6 @@
 
 <script lang="ts" setup>
 import { reactive } from "vue";
-import request from "../.././api/request";
 
 // do not use same name with ref
 const form = reactive({
@@ -38,7 +37,6 @@ const form = reactive({
 
 const onSubmit = () => {
   console.log("submit!");
-  request.post("/login", { ...form });
 };
 </script>
 
