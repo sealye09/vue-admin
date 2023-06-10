@@ -4,10 +4,15 @@ import Layout from "@/components/Layout.vue";
 const routes = [
   {
     path: "/",
-    name: "dashboard",
+    name: "home",
     component: Layout,
     redirect: "/users",
     children: [
+      {
+        path: "dashboard",
+        name: "dashboard",
+        component: () => import("@/pages/dashboard/index.vue"),
+      },
       {
         path: "users",
         name: "users",
