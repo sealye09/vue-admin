@@ -8,10 +8,22 @@
         @open="handleOpen"
         @close="handleClose"
       >
+        <div class="logo">
+          <img
+            src="../../public/vue.svg"
+            alt="logo"
+          />
+          <span
+            class="title"
+            v-if="!isCollapse"
+            >Vue Admin</span
+          >
+        </div>
+
         <el-sub-menu index="1">
           <template #title>
             <el-icon><location /></el-icon>
-            <span>Navigator One</span>
+            <span>商品管理</span>
           </template>
           <el-menu-item-group>
             <el-menu-item index="1-1">item one</el-menu-item>
@@ -20,11 +32,11 @@
         </el-sub-menu>
         <el-menu-item index="2">
           <el-icon><icon-menu /></el-icon>
-          <template #title>Navigator Two</template>
+          <template #title>商品管理</template>
         </el-menu-item>
         <el-menu-item index="3">
           <el-icon><document /></el-icon>
-          <template #title>Navigator Three</template>
+          <template #title>商品管理</template>
         </el-menu-item>
         <el-menu-item index="4">
           <el-icon><setting /></el-icon>
@@ -51,21 +63,23 @@
         </div>
 
         <div class="right">
-          <div class="avatar">
-            <el-dropdown trigger="click">
+          <el-dropdown class="avatar">
+            <div>
               <span class="el-dropdown-link">
                 <el-avatar
-                  :size="50"
+                  :size="32"
                   src="https://avatars.githubusercontent.com/u/499550?s=60&v=4"
                   alt="avatar"
                 />
               </span>
-              <el-dropdown-menu slot="dropdown">
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
                 <el-dropdown-item>个人中心</el-dropdown-item>
                 <el-dropdown-item>退出</el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown>
-          </div>
+            </template>
+          </el-dropdown>
         </div>
       </el-header>
       <el-main>Main</el-main>
@@ -86,7 +100,24 @@ const handleClose = (key, keyPath) => {
 };
 </script>
 
-<style>
+<style lang="scss">
+.logo {
+  height: 60px;
+  width: auto;
+  border-bottom: solid 1px var(--el-menu-border-color);
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 0 20px;
+
+  .title {
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
+.el-aside {
+  width: auto;
+}
 .el-header {
   display: flex;
   justify-content: space-between;
