@@ -4,7 +4,11 @@
 }
 
 .el-aside {
-  border-right: solid 1px var(--el-menu-border-color);
+  border-right: solid 1px $boderColor;
+
+  .aside-top {
+    border-bottom: solid 1px $boderColor;
+  }
   .el-menu {
     width: $sideBarWidth;
     margin: 0;
@@ -12,10 +16,6 @@
   }
 
   .el-menu--collapse {
-    svg {
-      height: 1.5rem;
-      width: 1.5rem;
-    }
     width: $hideSideBarWidth;
   }
 }

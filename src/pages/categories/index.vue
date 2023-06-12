@@ -1,7 +1,7 @@
-<template>
-  <div>categories</div>
-</template>
-
 <script setup></script>
 
-<style lang="scss" scoped></style>
+<template>
+  <div>cat</div>
+</template>
+
+<style scoped></style>

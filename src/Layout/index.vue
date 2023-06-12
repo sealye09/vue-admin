@@ -1,8 +1,28 @@
+<script setup>
+import { ref } from "vue";
+import { Menu as IconMenu, Setting } from "@element-plus/icons-vue";
+const isCollapse = ref(false);
+const handleOpen = (key, keyPath) => {
+  console.log(key, keyPath);
+};
+const handleClose = (key, keyPath) => {
+  console.log(key, keyPath);
+};
+
+const handleClck = () => {
+  console.log("message");
+  ElMessage({
+    duration: 2000,
+    message: "sss",
+    type: "error",
+  });
+};
+</script>
+
 <template>
   <el-container class="main-container">
     <el-aside class="sidebar-container">
       <el-menu
-        collapse-transition="false"
         default-active="2"
         :collapse="isCollapse"
         unique-opened
@@ -92,38 +112,18 @@
   </el-container>
 </template>
 
-<script setup>
-import { ref } from "vue";
-import { Menu as IconMenu, Setting } from "@element-plus/icons-vue";
-
-const isCollapse = ref(false);
-const handleOpen = (key, keyPath) => {
-  console.log(key, keyPath);
-};
-const handleClose = (key, keyPath) => {
-  console.log(key, keyPath);
-};
-
-const handleClck = () => {
-  console.log("message");
-  ElMessage({
-    duration: 2000,
-    message: "sss",
-    type: "error",
-  });
-};
-</script>
-
 <style lang="scss">
 .aside-top {
   height: 60px;
   width: auto;
   border-bottom: solid 1px var(--el-menu-border-color);
   align-items: center;
+
   .logo {
     display: flex;
     align-items: center;
   }
+
   .title {
     padding-left: 0.75rem;
     font-size: 20px;
