@@ -2,26 +2,31 @@
   <el-container class="main-container">
     <el-aside class="sidebar-container">
       <el-menu
+        collapse-transition="false"
         default-active="2"
         :collapse="isCollapse"
         unique-opened
         @open="handleOpen"
         @close="handleClose"
       >
-        <div class="logo">
-          <img
-            src="@/assets/vue.svg"
-            alt="logo"
-          />
+        <el-menu-item class="aside-top">
+          <el-icon class="logo">
+            <img
+              src="@/assets/vue.svg"
+              alt="logo"
+            />
+          </el-icon>
           <span
             class="title"
             v-if="!isCollapse"
             >Vue Admin</span
           >
-        </div>
+        </el-menu-item>
 
         <el-menu-item index="1">
-          <el-icon><DataBoard /></el-icon>
+          <el-icon>
+            <DataBoard />
+          </el-icon>
           <template #title>看板</template>
         </el-menu-item>
         <el-menu-item index="2">
@@ -29,11 +34,15 @@
           <template #title>商品管理</template>
         </el-menu-item>
         <el-menu-item index="3">
-          <el-icon><User /></el-icon>
+          <el-icon>
+            <User />
+          </el-icon>
           <template #title>用户管理</template>
         </el-menu-item>
         <el-menu-item index="4">
-          <el-icon><setting /></el-icon>
+          <el-icon>
+            <setting />
+          </el-icon>
           <template #title>商品管理</template>
         </el-menu-item>
       </el-menu>
@@ -47,13 +56,15 @@
           <el-icon
             size="18"
             v-if="isCollapse"
-            ><Expand
-          /></el-icon>
+          >
+            <Expand />
+          </el-icon>
           <el-icon
             v-else
             size="18"
-            ><Fold
-          /></el-icon>
+          >
+            <Fold />
+          </el-icon>
         </div>
 
         <div class="right">
@@ -96,7 +107,7 @@ const handleClose = (key, keyPath) => {
 const handleClck = () => {
   console.log("message");
   ElMessage({
-    duration: 300000,
+    duration: 2000,
     message: "sss",
     type: "error",
   });
@@ -104,23 +115,37 @@ const handleClck = () => {
 </script>
 
 <style lang="scss">
-.logo {
+.aside-top {
   height: 60px;
   width: auto;
   border-bottom: solid 1px var(--el-menu-border-color);
-  display: flex;
-  justify-content: space-evenly;
   align-items: center;
-  padding: 0 20px;
-
+  .logo {
+    display: flex;
+    align-items: center;
+  }
   .title {
+    padding-left: 0.75rem;
     font-size: 20px;
     font-weight: 600;
+    text-align: center;
   }
 }
+
+.aside-top:hover {
+  cursor: pointer;
+  background: none;
+}
+
 .el-aside {
+  img {
+    -webkit-user-drag: none;
+  }
+
+  user-select: none;
   width: auto;
 }
+
 .el-header {
   display: flex;
   justify-content: space-between;
@@ -133,6 +158,7 @@ const handleClck = () => {
   height: 100%;
   cursor: pointer;
 }
+
 .avatar {
   display: flex;
   align-items: center;

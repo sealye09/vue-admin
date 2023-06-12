@@ -6,19 +6,16 @@
 .el-aside {
   border-right: solid 1px var(--el-menu-border-color);
   .el-menu {
-    height: 100%;
     width: $sideBarWidth;
     margin: 0;
     border-right: none;
   }
 
   .el-menu--collapse {
-    width: auto;
-    .el-sub-menu__title,
-    .el-menu-item,
-    .el-menu-tooltip__trigger {
-      padding-left: calc(var(--el-menu-base-level-padding) + var(--el-menu-icon-width) / 2);
-      padding-right: calc(var(--el-menu-base-level-padding) + var(--el-menu-icon-width) / 2);
+    svg {
+      height: 1.5rem;
+      width: 1.5rem;
     }
+    width: $hideSideBarWidth;
   }
 }
