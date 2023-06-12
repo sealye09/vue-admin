@@ -10,7 +10,7 @@
       >
         <div class="logo">
           <img
-            src="@/../public/vue.svg"
+            src="@/assets/vue.svg"
             alt="logo"
           />
           <span
@@ -20,23 +20,17 @@
           >
         </div>
 
-        <el-sub-menu index="1">
-          <template #title>
-            <el-icon><location /></el-icon>
-            <span>商品管理</span>
-          </template>
-          <el-menu-item-group>
-            <el-menu-item index="1-1">item one</el-menu-item>
-            <el-menu-item index="1-2">item two</el-menu-item>
-          </el-menu-item-group>
-        </el-sub-menu>
+        <el-menu-item index="1">
+          <el-icon><DataBoard /></el-icon>
+          <template #title>看板</template>
+        </el-menu-item>
         <el-menu-item index="2">
           <el-icon><icon-menu /></el-icon>
           <template #title>商品管理</template>
         </el-menu-item>
         <el-menu-item index="3">
-          <el-icon><document /></el-icon>
-          <template #title>商品管理</template>
+          <el-icon><User /></el-icon>
+          <template #title>用户管理</template>
         </el-menu-item>
         <el-menu-item index="4">
           <el-icon><setting /></el-icon>
@@ -82,14 +76,14 @@
           </el-dropdown>
         </div>
       </el-header>
-      <el-main>Main</el-main>
+      <el-main> <el-button @click="handleClck">sss</el-button></el-main>
     </el-container>
   </el-container>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { Document, Menu as IconMenu, Location, Setting } from "@element-plus/icons-vue";
+import { Menu as IconMenu, Setting } from "@element-plus/icons-vue";
 
 const isCollapse = ref(false);
 const handleOpen = (key, keyPath) => {
@@ -97,6 +91,15 @@ const handleOpen = (key, keyPath) => {
 };
 const handleClose = (key, keyPath) => {
   console.log(key, keyPath);
+};
+
+const handleClck = () => {
+  console.log("message");
+  ElMessage({
+    duration: 300000,
+    message: "sss",
+    type: "error",
+  });
 };
 </script>
 

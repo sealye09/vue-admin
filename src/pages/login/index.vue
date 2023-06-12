@@ -28,6 +28,7 @@
 
 <script lang="ts" setup>
 import { reactive } from "vue";
+import { login } from "../../api/auth";
 
 // do not use same name with ref
 const form = reactive({
@@ -35,8 +36,24 @@ const form = reactive({
   password: "",
 });
 
-const onSubmit = () => {
+const onSubmit = async () => {
   console.log("submit!");
+  const res = await login({ ...form });
+  console.log(res);
+  if (res.meta.status === 200) {
+    ElMessage({
+      showClose: true,
+      message: res.meta.msg,
+      type: "success",
+    });
+  } else {
+    console.log("ss");
+    ElMessage({
+      showClose: true,
+      message: res.meta.msg,
+      type: "error",
+    });
+  }
 };
 </script>
 
