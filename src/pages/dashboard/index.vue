@@ -1,6 +1,7 @@
 <script setup>
 import useCountStore from "@/store/modules/countStore.js";
 import { ref } from "vue";
+import { Icon } from '@iconify/vue';
 const count = useCountStore();
 const num = ref(0);
 </script>
@@ -13,6 +14,7 @@ const num = ref(0);
     <br />
     pinia: <el-button @click="count.increment">{{ count.num }}</el-button>
   </div>
+  <Icon icon="ic:baseline-menu" />
 </template>
 
 <style scoped></style>

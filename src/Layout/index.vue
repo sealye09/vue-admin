@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-
+import { Icon } from "@iconify/vue";
 import useAppStore from "@/store/modules/appStore.js";
 import SideBar from "./SideBar.vue";
 
@@ -32,27 +32,38 @@ function handleLogout() {
   <el-container class="main-container">
     <side-bar :isCollapse="store.isSiderBarOpen" />
     <el-container>
-      <el-header>
+      <el-header class="bg-gray-100">
         <div
           class="hide-sidebar"
           @click="toggleSide"
         >
-          <el-icon
-            size="20"
-            v-if="store.isSiderBarOpen"
-          >
-            <Expand />
-          </el-icon>
-          <el-icon
-            v-else
-            size="20"
-          >
-            <Fold />
+          <el-icon size="24">
+            <Icon
+              v-if="store.isSiderBarOpen"
+              icon="bi:text-indent-left"
+            >
+            </Icon>
+            <Icon
+              v-else
+              icon="bi:text-indent-right"
+            />
           </el-icon>
         </div>
 
-        <div class="right">
-          <el-dropdown class="avatar">
+        <div class="right h-full flex items-center gap-8">
+          <el-icon size="24">
+            <Icon icon="ant-design:fullscreen-outlined" />
+          </el-icon>
+          <el-icon size="24">
+            <Icon icon="ion:language-outline" />
+          </el-icon>
+          <el-icon size="24">
+            <Icon icon="bi:gear" />
+          </el-icon>
+          <el-dropdown
+            class="avatar"
+            trigger="click"
+          >
             <div>
               <span class="el-dropdown-link">
                 <el-avatar
@@ -78,7 +89,12 @@ function handleLogout() {
   </el-container>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.main-container {
+  min-height: 100vh;
+  position: relative;
+}
+
 .el-header {
   display: flex;
   justify-content: space-between;
