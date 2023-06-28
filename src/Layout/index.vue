@@ -52,13 +52,13 @@ function handleLogout() {
 
         <div class="right h-full flex items-center gap-8">
           <el-icon size="24">
-            <Icon icon="ant-design:fullscreen-outlined" />
+            <Icon icon="heroicons:arrows-pointing-out" />
           </el-icon>
           <el-icon size="24">
-            <Icon icon="ion:language-outline" />
+            <Icon icon="heroicons:language" />
           </el-icon>
           <el-icon size="24">
-            <Icon icon="bi:gear" />
+            <Icon icon="heroicons:cog-6-tooth" />
           </el-icon>
           <el-dropdown
             class="avatar"

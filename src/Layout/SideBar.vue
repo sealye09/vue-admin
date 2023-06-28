@@ -26,6 +26,7 @@ const store = useAppStore();
       >
         <el-icon class="logo">
           <img
+            class="w-full h-full"
             src="@/assets/vue.svg"
             alt="logo"
           />
@@ -78,6 +79,9 @@ const store = useAppStore();
 <style scoped lang="scss">
 @import "@/styles/variables.scss";
 
+.logo {
+  transition: all 0.2s ease-in-out;
+}
 .el-aside {
   border-right: solid 1px $boderColor;
   height: 100vh;

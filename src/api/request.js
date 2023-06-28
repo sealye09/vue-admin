@@ -1,5 +1,6 @@
 import axios from "axios";
 import router from "@/router";
+// import { ElMessage } from "element-plus";
 
 const BASE_URL = "/api";
 const TIMEOUT = 20000;
@@ -52,7 +53,10 @@ request.interceptors.response.use(
           err.message = `连接错误${err.response.status}`;
       }
     }
-
+    // ElMessage({
+    //   type: "error",
+    //   message: err.message,
+    // });
     return Promise.reject(err);
   },
 );
