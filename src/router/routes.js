@@ -26,12 +26,12 @@ export const basicRoutes = [
     redirect: "/dashboard",
     children: [
       {
-        path: "dashboard",
+        path: "/dashboard",
         name: "Dashboard",
         meta: {
           title: "首页",
           hidden: false,
-          icon: "heroicons:clipboard",
+          icon: "heroicons:home",
         },
         component: () => import("@/pages/dashboard/index.vue"),
       },

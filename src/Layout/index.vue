@@ -5,6 +5,7 @@ import { Icon } from "@iconify/vue";
 import useAppStore from "@/store/modules/appStore.js";
 import SideBar from "./SideBar.vue";
 import useUserStore from "../store/modules/userStore";
+import BreadCrumb from "./BreadCrumb.vue";
 
 const router = useRouter();
 const store = useAppStore();
@@ -93,6 +94,8 @@ async function handleLogout() {
         </div>
       </el-header>
       <el-main>
+        <BreadCrumb> </BreadCrumb>
+        <el-divider />
         <router-view></router-view>
       </el-main>
     </el-container>

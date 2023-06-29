@@ -1,11 +1,7 @@
 <script setup>
-import { Icon } from '@iconify/vue';
+import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
 const props = defineProps(["menuList"]);
-const router = useRouter();
-const goRoute = (menu) => {
-  router.push(menu.index);
-};
 </script>
 
 <script>
@@ -16,7 +12,7 @@ export default {
 
 <template>
   <template
-    v-for="(item, index) in props.menuList"
+    v-for="item in props.menuList"
     :key="item.path"
   >
     <!--没有子路由-->
@@ -24,7 +20,6 @@ export default {
       <el-menu-item
         v-if="item.meta && !item.meta.hidden"
         :index="item.path"
-        @click="goRoute"
       >
         <el-icon>
           <Icon :icon="item.meta.icon"></Icon>
@@ -39,7 +34,6 @@ export default {
       <el-menu-item
         v-if="'hidden' in item.children[0].meta && !item.children[0].meta.hidden"
         :index="item.children[0].path"
-        @click="goRoute"
       >
         <el-icon>
           <Icon :icon="item.children[0].meta.icon"></Icon>
@@ -65,3 +59,8 @@ export default {
   </template>
 </template>
 
+<style scoped lang="scss">
+.is-active {
+  background: #C2C3C5;
+}
+</style>

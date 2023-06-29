@@ -32,33 +32,36 @@ const userStore = useUserStore();
 
 <template>
   <el-aside class="sidebar-container bg-gray-100">
-    <el-menu
-      router
-      active-text-color='#41B883'
-      background-color="#F3F4F6"
-      :default-openeds="defaultOpens"
-      :default-active="activeItem"
-      :collapse="appStore.isSiderBarOpen"
-    >
-      <el-menu-item
-        class="aside-top bg-gray-100"
-        @click="() => router.push('/')"
+    <el-scrollbar class="scrollbar">
+      <el-menu
+        router
+        text-color="#303133"
+        active-text-color="#41B883"
+        background-color="#F3F4F6"
+        :default-openeds="defaultOpens"
+        :default-active="activeItem"
+        :collapse="appStore.isSiderBarOpen"
       >
-        <el-icon class="logo">
-          <img
-            class="w-full h-full"
-            src="@/assets/vue.svg"
-            alt="logo"
-          />
-        </el-icon>
-        <span
-          class="title"
-          v-if="!isCollapse"
-          >Vue Admin
-        </span>
-      </el-menu-item>
-      <Menu :menuList="userStore.menu"></Menu>
-    </el-menu>
+        <el-menu-item
+          class="aside-top bg-gray-100"
+          @click="() => router.push('/')"
+        >
+          <el-icon class="logo">
+            <img
+              class="w-full h-full"
+              src="@/assets/vue.svg"
+              alt="logo"
+            />
+          </el-icon>
+          <span
+            class="title"
+            v-if="!isCollapse"
+            >Vue Admin
+          </span>
+        </el-menu-item>
+        <Menu :menuList="userStore.menu"></Menu>
+      </el-menu>
+    </el-scrollbar>
   </el-aside>
 </template>
 
@@ -69,7 +72,7 @@ const userStore = useUserStore();
   transition: all 0.2s ease-in-out;
 }
 .el-aside {
-  border-right: solid 1px $boderColor;
+  border-right: solid 1px var(--el-menu-border-color);
   height: 100vh;
   overflow-x: hidden;
   img {
@@ -88,7 +91,6 @@ const userStore = useUserStore();
     width: auto;
     border-bottom: solid 1px var(--el-menu-border-color);
     align-items: center;
-    border-bottom: solid 1px $boderColor;
     .logo {
       display: flex;
       align-items: center;
@@ -108,6 +110,11 @@ const userStore = useUserStore();
 
   .el-menu--collapse {
     width: $hideSideBarWidth;
+  }
+
+  .scrollbar {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>
