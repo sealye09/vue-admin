@@ -1,4 +1,5 @@
 <script setup>
+import { Icon } from '@iconify/vue';
 import { useRouter } from "vue-router";
 const props = defineProps(["menuList"]);
 const router = useRouter();
@@ -26,7 +27,7 @@ export default {
         @click="goRoute"
       >
         <el-icon>
-          <component :is="item.meta.icon"></component>
+          <Icon :icon="item.meta.icon"></Icon>
         </el-icon>
         <template #title>
           <span>{{ item.meta.title }}</span>
@@ -41,7 +42,7 @@ export default {
         @click="goRoute"
       >
         <el-icon>
-          <component :is="item.children[0].meta.icon"></component>
+          <Icon :icon="item.children[0].meta.icon"></Icon>
         </el-icon>
         <template #title>
           <span>{{ item.children[0].meta.title }}</span>
@@ -55,7 +56,7 @@ export default {
     >
       <template #title>
         <el-icon>
-          <component :is="item.meta.icon"></component>
+          <Icon :icon="item.meta.icon"></Icon>
         </el-icon>
         <span>{{ item.meta.title }}</span>
       </template>

@@ -31,7 +31,7 @@ export const basicRoutes = [
         meta: {
           title: "首页",
           hidden: false,
-          icon: "HomeFilled",
+          icon: "heroicons:clipboard",
         },
         component: () => import("@/pages/dashboard/index.vue"),
       },
@@ -54,7 +54,7 @@ export const basicRoutes = [
     meta: {
       title: "404",
       hidden: true,
-      icon: "DocumentDelete",
+      icon: "",
     },
     component: () => import("@/pages/404/index.vue"),
   },
@@ -64,7 +64,7 @@ export const basicRoutes = [
     meta: {
       hidden: false,
       title: "数据大屏",
-      icon: "Platform",
+      icon: "heroicons:computer-desktop",
     },
     component: () => import("@/pages/screen/index.vue"),
   },
@@ -77,7 +77,7 @@ export const asnycRoutes = [
     name: "Acl",
     meta: {
       title: "权限管理",
-      icon: "Lock",
+      icon: "heroicons:key",
     },
     component: () => import("@/layout/index.vue"),
     redirect: "/acl/user",
@@ -88,7 +88,7 @@ export const asnycRoutes = [
         component: () => import("@/pages/acl/user/index.vue"),
         meta: {
           title: "用户管理",
-          icon: "User",
+          icon: "heroicons:user",
         },
       },
       {
@@ -97,7 +97,7 @@ export const asnycRoutes = [
         component: () => import("@/pages/acl/role/index.vue"),
         meta: {
           title: "角色管理",
-          icon: "UserFilled",
+          icon: "heroicons:finger-print",
         },
       },
       {
@@ -106,7 +106,7 @@ export const asnycRoutes = [
         component: () => import("@/pages/acl/permission/index.vue"),
         meta: {
           title: "菜单管理",
-          icon: "Monitor",
+          icon: "heroicons:squares-2x2",
         },
       },
     ],
@@ -116,7 +116,7 @@ export const asnycRoutes = [
     name: "Product",
     meta: {
       title: "商品管理",
-      icon: "Goods",
+      icon: "heroicons:shopping-bag",
     },
     component: () => import("@/layout/index.vue"),
     redirect: "/product/trademark",
@@ -127,7 +127,7 @@ export const asnycRoutes = [
         name: "Trademark",
         meta: {
           title: "品牌管理",
-          icon: "ShoppingCartFull",
+          icon: "heroicons:paper-airplane",
         },
       },
       {
@@ -136,7 +136,7 @@ export const asnycRoutes = [
         name: "Attr",
         meta: {
           title: "属性管理",
-          icon: "ChromeFilled",
+          icon: "heroicons:tag",
         },
       },
       {
@@ -145,7 +145,7 @@ export const asnycRoutes = [
         name: "Spu",
         meta: {
           title: "SPU管理",
-          icon: "Calendar",
+          icon: "heroicons:magnifying-glass-solid",
         },
       },
       {
@@ -154,7 +154,7 @@ export const asnycRoutes = [
         name: "Sku",
         meta: {
           title: "SKU管理",
-          icon: "Orange",
+          icon: "heroicons:paper-clip-20-solid",
         },
       },
     ],
