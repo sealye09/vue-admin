@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>reports</div>
+  <div>product-spu</div>
 </template>
 
 <style lang="scss" scoped></style>

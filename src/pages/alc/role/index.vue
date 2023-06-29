@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>rights</div>
+  <div>alc-role</div>
 </template>
 
 <style lang="scss" scoped></style>

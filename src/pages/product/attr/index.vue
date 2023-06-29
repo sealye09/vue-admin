@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>goods</div>
+  <div>product-attr</div>
 </template>
 
 <style lang="scss" scoped></style>

@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>params</div>
+  <div>product-trademark</div>
 </template>
 
 <style lang="scss" scoped></style>

@@ -11,20 +11,7 @@ const handleClick = () => {
 </script>
 
 <template>
-  <div>
-    dashboard
-    <br />
-    ref:<el-button @click="num++">{{ num }}</el-button>
-    <br />
-    pinia: <el-button @click="count.increment">{{ count.num }}</el-button>
-  </div>
-
-  <button
-    class="bg-red-300 px-4 py-2 rounded-md text-white"
-    @click="handleClick"
-  >
-    Post
-  </button>
+  <div>screen</div>
 </template>
 
 <style scoped></style>

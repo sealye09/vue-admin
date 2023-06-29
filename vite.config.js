@@ -25,13 +25,14 @@ export default defineConfig(({ mode }) => {
       Components({
         resolvers: [ElementPlusResolver()],
       }),
+
     ],
     server: {
       proxy: {
         "/api": {
-          target: config.VITE_BASE_URL,
+          target: config.VITE_SERVE,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/v1/, ""),
+          rewrite: (path) => path.replace(/^\/api/, ""),
         },
       },
     },

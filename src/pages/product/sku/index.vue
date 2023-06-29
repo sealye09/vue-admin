@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>roles</div>
+  <div>product-sku</div>
 </template>
 
 <style lang="scss" scoped></style>

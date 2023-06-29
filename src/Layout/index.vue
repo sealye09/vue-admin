@@ -4,9 +4,11 @@ import { ElMessage } from "element-plus";
 import { Icon } from "@iconify/vue";
 import useAppStore from "@/store/modules/appStore.js";
 import SideBar from "./SideBar.vue";
+import useUserStore from "../store/modules/userStore";
 
 const router = useRouter();
 const store = useAppStore();
+const userInfo = useUserStore().userInfo;
 
 function toggleSide() {
   store.toggleSideBar();
@@ -67,6 +69,13 @@ function handleLogout() {
             <div>
               <span class="el-dropdown-link">
                 <el-avatar
+                  v-if="userInfo && userInfo.avatar"
+                  :size="32"
+                  :src="userInfo.avatar"
+                  alt="avatar"
+                />
+                <el-avatar
+                  v-else
                   :size="32"
                   src="https://avatars.githubusercontent.com/u/77105397?v=4"
                   alt="avatar"

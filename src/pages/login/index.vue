@@ -1,50 +1,40 @@
-<script lang="ts" setup="setup">
+<script setup="setup">
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import request from "../../api/request.js";
-import axios from "axios";
+import { ElMessage } from "element-plus";
+
+import useUserStore from "@/store/modules/userStore.js";
 
 const userInfo = reactive({
-  username: "",
-  password: "",
+  username: "admin",
+  password: "atguigu123",
 });
+
+let loginForm = ref(null);
 
 const rules = {
   username: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
   password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
 };
 
-const formEl = ref<HTMLFormElement | null>(null);
 const router = useRouter();
-// const userStore = useUserStore();
-const handleSubmit = (e: Event) => {
+const userStore = useUserStore();
+const handleSubmit = async (e) => {
   e.preventDefault();
-  try {
-    axios.post("api/loginsada", userInfo).then((res) => {
-    console.log("🚀 ~ file: index.vue:24 ~ axios.post ~ res:", res)
+  await loginForm.value.validate();
+  const res = await userStore.login(userInfo.username, userInfo.password);
+  if (res) {
+    ElMessage({
+      type: "success",
+      message: "欢迎回来，" + userStore.userInfo.name,
     });
-    request.post("/login", userInfo).then((res) => {
-    console.log("🚀 ~ file: index.vue:27 ~ request.post ~ res:", res)
+    router.push("/");
+  } else {
+    ElMessage({
+      type: "error",
+      message: "登录失败",
     });
-  } catch (e) {
-    console.log(e);
   }
-
-  // formEl.value!.validate().then(async (ok: boolean) => {
-  //   if (!ok) return;
-  //   try {
-  //     let { code, data, msg } = await reqUserLogin(userInfo);
-  //     if (code === OK_CODE) {
-  //       ElMessage.success(msg);
-  //       userStore.login(Object.assign({}, data.info, { token: data.token }));
-  //       router.push({ name: "Dashboard" });
-  //       return;
-  //     }
-  //     ElMessage.error(msg);
-  //   } catch (e) {
-  //     ElMessage.error(e as string);
-  //   }
-  // });
 };
 </script>
 
@@ -59,7 +49,7 @@ const handleSubmit = (e: Event) => {
           :model="userInfo"
           :rules="rules"
           @submit="handleSubmit"
-          ref="formEl"
+          ref="loginForm"
         >
           <el-form-item prop="username">
             <el-input
