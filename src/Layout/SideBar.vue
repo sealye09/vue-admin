@@ -1,4 +1,5 @@
 <script setup>
+import { ref, computed } from "vue";
 import useAppStore from "@/store/modules/appStore.js";
 import { useRouter } from "vue-router";
 import Menu from "./Menu.vue";
@@ -9,6 +10,22 @@ const props = defineProps({
   isCollapse: Boolean,
 });
 
+const activeItem = computed(() => {
+  return router.currentRoute.value.path;
+});
+
+const defaultOpens = computed(() => {
+  const path = router.currentRoute.value.path;
+  const opens = [];
+  const splitPath = path.slice(1, path.length - 1).split("/");
+  splitPath.reduce((prev, curr) => {
+    opens.push(prev + "/" + curr);
+    splitPath.push(prev + "/" + curr);
+    return prev + "/" + curr;
+  }, "");
+  return opens;
+});
+
 const appStore = useAppStore();
 const userStore = useUserStore();
 </script>
@@ -17,8 +34,8 @@ const userStore = useUserStore();
   <el-aside class="sidebar-container bg-gray-100">
     <el-menu
       router
-      unique-opened
-      default-active="/dashboard"
+      :default-openeds="defaultOpens"
+      :default-active="activeItem"
       :collapse="appStore.isSiderBarOpen"
     >
       <el-menu-item

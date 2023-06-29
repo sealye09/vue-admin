@@ -16,7 +16,7 @@ export const anyRoute = {
 export const basicRoutes = [
   {
     path: "/",
-    name: "Home",
+    name: "Layout",
     component: Layout,
     meta: {
       title: "",
@@ -27,7 +27,7 @@ export const basicRoutes = [
     children: [
       {
         path: "dashboard",
-        name: "dashboard",
+        name: "Dashboard",
         meta: {
           title: "首页",
           hidden: false,

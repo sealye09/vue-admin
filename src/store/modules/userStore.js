@@ -59,9 +59,10 @@ const useUserStore = defineStore({
         //菜单需要的数据整理完毕
         this.menu = [...basicRoutes, ...userRoutes, anyRoute];
         //目前路由器管理的只有常量路由:用户计算完毕异步路由、任意路由动态追加
-        [...userRoutes, anyRoute].forEach((route) => {
+        userRoutes.forEach((route) => {
           router.addRoute(route);
         });
+        router.addRoute(anyRoute);
         return "ok";
       } else {
         return Promise.reject(new Error(res.message));
@@ -77,11 +78,6 @@ const useUserStore = defineStore({
       this.menu = null;
     },
 
-    // async initMenu() {
-    //   await this.menu.forEach((route) => {
-    //     router.addRoute(route);
-    //   });
-    // },
   },
   persist: {
     paths: ["token"],
