@@ -13,23 +13,38 @@ export const anyRoute = {
   },
 };
 
-export const routes = [
+export const basicRoutes = [
   {
     path: "/",
-    name: "home",
+    name: "Home",
     component: Layout,
+    meta: {
+      title: "",
+      hidden: false,
+      icon: "",
+    },
     redirect: "/dashboard",
     children: [
       {
         path: "dashboard",
         name: "dashboard",
+        meta: {
+          title: "首页",
+          hidden: false,
+          icon: "HomeFilled",
+        },
         component: () => import("@/pages/dashboard/index.vue"),
       },
     ],
   },
   {
     path: "/login",
-    name: "login",
+    name: "Login",
+    meta: {
+      title: "登录",
+      hidden: true,
+      icon: "",
+    },
     component: () => import("@/pages/login/index.vue"),
   },
 
@@ -53,11 +68,10 @@ export const routes = [
     },
     component: () => import("@/pages/screen/index.vue"),
   },
-  anyRoute,
 ];
 
 // 异步路由
-export const asnycRoute = [
+export const asnycRoutes = [
   {
     path: "/acl",
     name: "Acl",
@@ -65,7 +79,7 @@ export const asnycRoute = [
       title: "权限管理",
       icon: "Lock",
     },
-    component: Layout,
+    component: () => import("@/layout/index.vue"),
     redirect: "/acl/user",
     children: [
       {
@@ -100,11 +114,11 @@ export const asnycRoute = [
   {
     path: "/product",
     name: "Product",
-    component: Layout,
     meta: {
       title: "商品管理",
       icon: "Goods",
     },
+    component: () => import("@/layout/index.vue"),
     redirect: "/product/trademark",
     children: [
       {

@@ -10,7 +10,14 @@ import "element-plus/dist/index.css";
 
 const app = createApp(App);
 
+async function call() {
+  setupStore(app);
+}
+
 setupStore(app);
 
 app.use(router);
+
+import "./permisstion.js";
+
 app.mount("#app");

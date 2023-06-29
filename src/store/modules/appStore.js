@@ -1,24 +1,19 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 
-const useAppStore = defineStore(
-  "app-store",
-  () => {
-    const isSiderBarOpen = ref(false);
+const useAppStore = defineStore({
+  id: "app-store",
+  state: () => ({
+    isSiderBarOpen: false,
+  }),
 
-    function toggleSideBar() {
+  actions: {
+    toggleSideBar() {
       this.isSiderBarOpen = !this.isSiderBarOpen;
-    }
+    },
+  },
 
-    return {
-      isSiderBarOpen,
-      toggleSideBar,
-    };
-  },
-  {
-    persist: true,
-    storage: localStorage,
-  },
-);
+  persist: true,
+});
 
 export default useAppStore;

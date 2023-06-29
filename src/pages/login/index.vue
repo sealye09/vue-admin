@@ -22,11 +22,13 @@ const userStore = useUserStore();
 const handleSubmit = async (e) => {
   e.preventDefault();
   await loginForm.value.validate();
-  const res = await userStore.login(userInfo.username, userInfo.password);
-  if (res) {
+  await userStore.login(userInfo.username, userInfo.password);
+  await userStore.userInfo();
+
+  if (userStore.token) {
     ElMessage({
       type: "success",
-      message: "欢迎回来，" + userStore.userInfo.name,
+      message: "欢迎回来，" + userStore.info.name,
     });
     router.push("/");
   } else {

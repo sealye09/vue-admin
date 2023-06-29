@@ -20,3 +20,8 @@ export async function getUserInfo() {
   const res = await request.get("/admin/acl/index/info");
   return res;
 }
+
+export async function getMenuList() {
+  const res = await request.get("/admin/acl/index/menu");
+  return res;
+}

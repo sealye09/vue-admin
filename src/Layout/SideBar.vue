@@ -1,15 +1,16 @@
 <script setup>
-import { Menu as IconMenu, Setting } from "@element-plus/icons-vue";
 import useAppStore from "@/store/modules/appStore.js";
 import { useRouter } from "vue-router";
-import { Icon } from "@iconify/vue";
+import Menu from "./Menu.vue";
+import useUserStore from "../store/modules/userStore";
 
 const router = useRouter();
 const props = defineProps({
   isCollapse: Boolean,
 });
 
-const store = useAppStore();
+const appStore = useAppStore();
+const userStore = useUserStore();
 </script>
 
 <template>
@@ -18,7 +19,7 @@ const store = useAppStore();
       router
       unique-opened
       default-active="/dashboard"
-      :collapse="store.isSiderBarOpen"
+      :collapse="appStore.isSiderBarOpen"
     >
       <el-menu-item
         class="aside-top bg-gray-100"
@@ -37,41 +38,7 @@ const store = useAppStore();
           >Vue Admin
         </span>
       </el-menu-item>
-
-      <el-menu-item
-        index="/dashboard"
-        class="bg-gray-100"
-      >
-        <el-icon size="18">
-          <Icon icon="bi:x-diamond" />
-        </el-icon>
-        <template #title>看板</template>
-      </el-menu-item>
-      <el-menu-item
-        index="categories"
-        class="bg-gray-100"
-      >
-        <el-icon size="18"> <Icon icon="bi:bag-dash" /></el-icon>
-        <template #title>商品管理</template>
-      </el-menu-item>
-      <el-menu-item
-        index="/users"
-        class="bg-gray-100"
-      >
-        <el-icon size="18">
-          <Icon icon="bi:person" />
-        </el-icon>
-        <template #title>用户管理</template>
-      </el-menu-item>
-      <el-menu-item
-        index="/goods"
-        class="bg-gray-100"
-      >
-        <el-icon size="18">
-          <Icon icon="bi:cart-dash" />
-        </el-icon>
-        <template #title>商品管理</template>
-      </el-menu-item>
+      <Menu :menuList="userStore.menu"></Menu>
     </el-menu>
   </el-aside>
 </template>

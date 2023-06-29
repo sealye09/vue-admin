@@ -8,9 +8,9 @@ import useUserStore from "../store/modules/userStore";
 
 const router = useRouter();
 const store = useAppStore();
-const userInfo = useUserStore().userInfo;
+const userStore = useUserStore();
 
-function toggleSide() {
+function toggleSideBar() {
   store.toggleSideBar();
 }
 
@@ -21,7 +21,8 @@ function toPersonCenter() {
   });
 }
 
-function handleLogout() {
+async function handleLogout() {
+  await userStore.logout();
   ElMessage({
     message: "退出成功",
     type: "success",
@@ -37,7 +38,7 @@ function handleLogout() {
       <el-header class="bg-gray-100">
         <div
           class="hide-sidebar"
-          @click="toggleSide"
+          @click="toggleSideBar"
         >
           <el-icon size="24">
             <Icon
@@ -69,9 +70,9 @@ function handleLogout() {
             <div>
               <span class="el-dropdown-link">
                 <el-avatar
-                  v-if="userInfo && userInfo.avatar"
+                  v-if="userStore && userStore.info && userStore.info.avatar"
                   :size="32"
-                  :src="userInfo.avatar"
+                  :src="userStore.info.avatar"
                   alt="avatar"
                 />
                 <el-avatar
