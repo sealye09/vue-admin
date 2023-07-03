@@ -168,6 +168,7 @@ watch(
   <el-dialog
     width="40%"
     v-model="addDialogValue.visible"
+    :close-on-click-modal="false"
     title="Add a role"
   >
     <el-form
@@ -203,6 +204,7 @@ watch(
   <el-dialog
     width="40%"
     v-model="editDialogValue.visible"
+    :close-on-click-modal="false"
     title="Edit"
   >
     <el-form

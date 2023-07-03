@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { Icon } from "@iconify/vue";
@@ -10,6 +11,8 @@ import BreadCrumb from "./BreadCrumb.vue";
 const router = useRouter();
 const store = useAppStore();
 const userStore = useUserStore();
+
+const fullscreen = ref(false);
 
 function toggleSideBar() {
   store.toggleSideBar();
@@ -30,6 +33,33 @@ async function handleLogout() {
   });
   router.replace("/login");
 }
+
+function handleFullScreen() {
+  let element = document.documentElement;
+  if (fullscreen.value) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitCancelFullScreen) {
+      document.webkitCancelFullScreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  } else {
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.webkitRequestFullScreen) {
+      element.webkitRequestFullScreen();
+    } else if (element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if (element.msRequestFullscreen) {
+      // IE11
+      element.msRequestFullscreen();
+    }
+  }
+  fullscreen.value = !fullscreen.value;
+}
 </script>
 
 <template>
@@ -44,24 +74,36 @@ async function handleLogout() {
           <el-icon size="24">
             <Icon
               v-if="store.isSiderBarOpen"
+              class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
               icon="heroicons:chevron-double-right"
             >
             </Icon>
             <Icon
               v-else
+              class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
               icon="heroicons:chevron-double-left"
             />
           </el-icon>
         </div>
 
         <div class="right h-full flex items-center gap-8">
-          <el-icon size="24">
+          <el-icon
+            size="24"
+            class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
+            @click="handleFullScreen"
+          >
             <Icon icon="heroicons:arrows-pointing-out" />
           </el-icon>
-          <el-icon size="24">
+          <el-icon
+            size="24"
+            class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
+          >
             <Icon icon="heroicons:language" />
           </el-icon>
-          <el-icon size="24">
+          <el-icon
+            size="24"
+            class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
+          >
             <Icon icon="heroicons:cog-6-tooth" />
           </el-icon>
           <el-dropdown
@@ -107,7 +149,7 @@ async function handleLogout() {
         <el-main>
           <BreadCrumb> </BreadCrumb>
           <el-divider />
-          <div class='p-5 border rounded-md shadow-sm'>
+          <div class="p-5 border rounded-md shadow-sm">
             <router-view></router-view>
           </div>
         </el-main>

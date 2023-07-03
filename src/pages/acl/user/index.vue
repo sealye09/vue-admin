@@ -153,6 +153,7 @@ watch(
   <el-dialog
     width="40%"
     v-model="dialogValue.visible"
+    :close-on-click-modal="false"
     @submit="handleAddUser"
     title="Add a user"
   >

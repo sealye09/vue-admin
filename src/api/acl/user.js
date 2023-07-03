@@ -42,6 +42,18 @@ export async function deleteUserById(id) {
 }
 
 /**
+ * 批量删除用户
+ * @param {number[]|string[]} idList
+ * @returns
+ */
+export async function deleteUsers(idList) {
+  const res = await request.delete(`/admin/acl/user/batchRemove`, {
+    data: idList,
+  });
+  return res;
+}
+
+/**
  * 修改用户
  * @param {object} data
  * @returns

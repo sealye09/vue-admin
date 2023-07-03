@@ -14,18 +14,25 @@ const handleClick = async () => {
 <template>
   <div>
     dashboard
-    <br />
-    ref:<el-button @click="num++">{{ num }}</el-button>
-    <br />
-    pinia: <el-button @click="count.increment">{{ count.num }}</el-button>
+    <div class="flex flex-col gap-4 my-2">
+      <div class="flex gap-2 items-center">
+        <span>Vue ref</span>
+        <el-button
+          type="primary"
+          @click="num++"
+          >{{ num }}</el-button
+        >
+      </div>
+      <div class="flex gap-4 items-center">
+        <span>pinia </span>
+        <el-button
+          type="primary"
+          @click="count.increment"
+          >{{ count.num }}</el-button
+        >
+      </div>
+    </div>
   </div>
-
-  <button
-    class="bg-red-300 px-4 py-1 rounded-md text-white"
-    @click="handleClick"
-  >
-    Post
-  </button>
 </template>
 
 <style scoped></style>
