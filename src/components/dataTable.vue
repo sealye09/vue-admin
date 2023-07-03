@@ -8,19 +8,29 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  handleEdit: {
-    type: Function,
-    required: true,
-  },
-  handleDelete: {
-    type: Function,
-    required: true,
-  },
   isLoading: {
     type: Boolean,
     default: false,
   },
+  isSlectable: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+const emits = defineEmits(["on-edit", "on-delete", "on-selection-change"]);
+
+const onSelectionChange = (val) => {
+  emits("on-selection-change", val);
+};
+
+const onEdit = (index, row) => {
+  emits("on-edit", index, row);
+};
+
+const onDelete = (index, row) => {
+  emits("on-delete", index, row);
+};
 </script>
 
 <template>
@@ -28,7 +38,12 @@ const props = defineProps({
     :data="props.data"
     border
     stripe
+    @selection-change="onSelectionChange"
   >
+    <el-table-column
+      v-if="props.isSlectable"
+      type="selection"
+    ></el-table-column>
     <el-table-column
       v-for="(column, index) in props.columns"
       :sortable="column.sortable"
@@ -45,7 +60,7 @@ const props = defineProps({
         <el-button
           title="Edit User"
           size="small"
-          @click="handleEdit(scope.$index, scope.row)"
+          @click="onEdit(scope.$index, scope.row)"
         >
           Edit
         </el-button>
@@ -53,7 +68,7 @@ const props = defineProps({
           confirm-button-text="确认"
           cancel-button-text="取消"
           title="确认删除吗？"
-          @confirm="handleDelete(scope.$index, scope.row)"
+          @confirm="onDelete(scope.$index, scope.row)"
         >
           <template #reference>
             <el-button

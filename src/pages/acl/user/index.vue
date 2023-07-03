@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, computed, onMounted, ref, watch } from "vue";
-import { getUsers, addUser, deleteUserById, updateUserById } from "@/api/acl/user.js";
+import { getUsers, addUser, deleteUserById, updateUserById, deleteUsers } from "@/api/acl/user.js";
 import dataTable from "@/components/dataTable.vue";
 
 const tableData = reactive({
@@ -11,6 +11,8 @@ const tableData = reactive({
   isLoading: false,
   pageSizes: [10, 20, 30, 40, 1, 2],
   layout: "prev, pager, next, jumper, ->, sizes, total",
+  isLoading: false,
+  isSlectable: true,
   columns: [
     {
       prop: "id",
@@ -93,12 +95,12 @@ const handleAddUser = async (formRef) => {
 };
 
 const editUser = (idx, data) => {
+  console.log("get edit data:", idx, data);
   const id = data.id;
-
-  console.log("edit", idx, data);
 };
 
 const handleDeleteUser = async (idx, data) => {
+  console.log("get delete data:", idx, data);
   const id = data.id;
   const res = await deleteUserById(id);
   if (res.code === 200) {
@@ -117,6 +119,10 @@ const handleDeleteUser = async (idx, data) => {
 
 const clearFilter = () => {
   usernameFilter.value = "";
+};
+
+const handleSelectionChange = (val) => {
+  console.log("get value:", val);
 };
 
 onMounted(async () => {
@@ -193,38 +199,72 @@ watch(
     </el-form>
   </el-dialog>
 
-  <div class="pb-6 flex gap-4">
-    <div class="w-72 mr-8">
-      <el-input
-        type="text"
-        v-model="usernameFilter"
+  <div class="pb-6 flex flex-col gap-4">
+    <div class="flex">
+      <div class="block w-72 mr-8">
+        <el-input
+          type="text"
+          v-model="usernameFilter"
+          class="my-2"
+          placeholder="search user by username"
+          clearable
+        />
+      </div>
+      <div class="block w-72 mr-8">
+        <el-input
+          type="text"
+          v-model="usernameFilter"
+          class="my-2"
+          placeholder="search user by username"
+          clearable
+        />
+      </div>
+      <div class="block w-72 mr-8">
+        <el-input
+          type="text"
+          v-model="usernameFilter"
+          class="my-2"
+          placeholder="search user by username"
+          clearable
+        />
+      </div>
+      <el-button
+        @click="clearFilter"
+        type="primary"
         class="my-2"
-        placeholder="search user by username"
-        clearable
-      />
+      >
+        Reset Filters
+      </el-button>
     </div>
-    <el-button
-      @click="clearFilter"
-      type="primary"
-      class="my-2"
-    >
-      Reset
-    </el-button>
-    <el-button
-      class="my-2"
-      @click="() => (dialogValue.visible = true)"
-    >
-      Add
-    </el-button>
+
+    <div class="flex gap-2">
+      <el-button
+        class="my-2"
+        type="primary"
+        @click="() => (dialogValue.visible = true)"
+      >
+        添加用户
+      </el-button>
+      <el-button
+        class="my-2"
+        type="danger"
+        @click="() => console.log('delete many')"
+      >
+        批量删除
+      </el-button>
+    </div>
   </div>
 
   <data-table
     :data="filteredUsers"
     :columns="tableData.columns"
-    :handle-edit="editUser"
-    :handle-delete="handleDeleteUser"
     :is-loading="tableData.isLoading"
+    :is-slectable="tableData.isSlectable"
+    @on-edit="editUser"
+    @on-delete="handleDeleteUser"
+    @on-selection-change="handleSelectionChange"
   ></data-table>
+
   <el-pagination
     class="mt-6 mb-4 w-full"
     background

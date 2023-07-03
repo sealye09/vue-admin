@@ -36,7 +36,7 @@ const userStore = useUserStore();
       <el-menu
         router
         text-color="#303133"
-        active-text-color="#409EFF"
+        active-text-color="rgba(59, 130, 246, 0.8)"
         background-color="#F3F4F6"
         :default-openeds="defaultOpens"
         :default-active="activeItem"

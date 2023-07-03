@@ -8,6 +8,7 @@ const tableData = reactive({
   total: 10,
   pageSize: 10,
   currentPage: 1,
+  isSlectable: true,
   isLoading: false,
   pageSizes: [10, 20, 30, 40, 1, 2],
   layout: "prev, pager, next, jumper, ->, sizes, total",
@@ -96,11 +97,12 @@ const openEditDialog = (idx, data) => {
 };
 
 const handleEditRole = async (formRef) => {
+  console.log("get edit data:", editDialogValue);
   if (!formRef) return;
   await formRef.validate(async (valid, fields) => {
     if (valid) {
       console.log("submit!");
-      const res = await updateRoleById(editDialogValue.id, editDialogValue.roleName);
+      await updateRoleById(editDialogValue.id, editDialogValue.roleName);
       ElMessage({
         type: "success",
         message: "修改成功",
@@ -118,6 +120,7 @@ const handleEditRole = async (formRef) => {
 };
 
 const handleDeleteRole = async (idx, data) => {
+  console.log("get delete data:", idx, data);
   const id = data.id;
   const res = await deleteRoleById(id);
   if (res.code === 200) {
@@ -154,6 +157,10 @@ const handleSizeChange = (val) => {
 
 const handleCurrentChange = (val) => {
   console.log(`current page: ${val}`);
+};
+
+const handleSelectionChange = (val) => {
+  console.log("get value:", val);
 };
 
 watch(
@@ -258,9 +265,11 @@ watch(
   <data-table
     :data="filteredRoles"
     :columns="tableData.columns"
-    :handle-edit="openEditDialog"
-    :handle-delete="handleDeleteRole"
     :is-loading="tableData.isLoading"
+    :is-slectable="tableData.isSlectable"
+    @on-edit="openEditDialog"
+    @on-delete="handleDeleteRole"
+    @on-selection-change="handleSelectionChange"
   >
   </data-table>
   <el-pagination
