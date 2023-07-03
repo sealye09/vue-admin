@@ -49,14 +49,22 @@ const props = defineProps({
         >
           Edit
         </el-button>
-        <el-button
-          title="Delete User"
-          size="small"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
+        <el-popconfirm
+          confirm-button-text="确认"
+          cancel-button-text="取消"
+          title="确认删除吗？"
+          @confirm="handleDelete(scope.$index, scope.row)"
         >
-          Delete
-        </el-button>
+          <template #reference>
+            <el-button
+              title="Delete User"
+              size="small"
+              type="danger"
+            >
+              Delete
+            </el-button>
+          </template>
+        </el-popconfirm>
       </template>
     </el-table-column>
     <template #empty>

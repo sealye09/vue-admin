@@ -71,8 +71,8 @@ const handleSubmit = async (e) => {
               class="w-full"
               type="primary"
               native-type="submit"
-              >登录</el-button
-            >
+              >登录
+            </el-button>
           </el-form-item>
         </el-form>
       </div>

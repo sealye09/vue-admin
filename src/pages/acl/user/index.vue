@@ -1,8 +1,7 @@
 <script setup>
 import { reactive, computed, onMounted, ref, watch } from "vue";
-import { getUsers } from "@/api/acl/user.js";
+import { getUsers, addUser, deleteUserById, updateUserById } from "@/api/acl/user.js";
 import userTable from "./userTable.vue";
-import { add } from "lodash";
 
 const tableData = reactive({
   data: [],
@@ -51,23 +50,69 @@ const filteredUsers = computed(() => {
     return upperUsername.includes(upperUsernameFilter);
   });
 });
-const dialogFormVisible = ref(false);
+
+const addUserForm = ref();
 const dialogValue = reactive({
   username: "",
   password: "",
-  role: "",
+  visible: false,
 });
 
-const addUser = (user, data) => {
-  console.log("add", user, data);
+const rules = {
+  username: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
+  password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
 };
 
-const editUser = (user, data) => {
-  console.log("edit", user, data);
+const handleAddUser = async (formRef) => {
+  if (!formRef) return;
+  await formRef.validate(async (valid, fields) => {
+    if (valid) {
+      console.log("submit!");
+      const res = await addUser({
+        username: dialogValue.username,
+        password: dialogValue.password,
+      });
+      ElMessage({
+        type: "success",
+        message: "添加成功",
+      });
+      fetchData();
+      dialogValue.visible = false;
+    } else {
+      ElMessage({
+        type: "error",
+        message: "添加失败",
+      });
+      console.log("error submit!", fields);
+    }
+  });
+
+  // 清空
+  dialogValue.username = "";
+  dialogValue.password = "";
 };
 
-const deleteUser = (user, data) => {
-  console.log("delete", user, data);
+const editUser = (idx, data) => {
+  const id = data.id;
+
+  console.log("edit", idx, data);
+};
+
+const handleDeleteUser = async (idx, data) => {
+  const id = data.id;
+  const res = await deleteUserById(id);
+  if (res.code === 200) {
+    ElMessage({
+      type: "success",
+      message: "删除成功",
+    });
+    fetchData();
+  } else {
+    ElMessage({
+      type: "error",
+      message: `删除失败: ${res.data}`,
+    });
+  }
 };
 
 const clearFilter = () => {
@@ -106,36 +151,46 @@ watch(
 
 <template>
   <el-dialog
-    v-model="dialogFormVisible"
+    width="40%"
+    v-model="dialogValue.visible"
+    @submit="handleAddUser"
     title="Add a user"
   >
     <el-form
+      :rules="rules"
       :model="dialogValue"
       label-position="right"
       label-width="100px"
+      ref="addUserForm"
     >
-      <el-form-item label="Username">
+      <el-form-item
+        prop="username"
+        label="Username"
+        required
+      >
         <el-input v-model="dialogValue.username" />
       </el-form-item>
-      <el-form-item label="Password">
+      <el-form-item
+        prop="password"
+        label="Password"
+        required
+      >
         <el-input v-model="dialogValue.password" />
       </el-form-item>
-      <el-form-item label="Role">
-        <el-input v-model="dialogValue.role" />
+      <el-form-item class="">
+        <span class="dialog-footer">
+          <el-button @click="dialogValue.visible = false">Cancel</el-button>
+          <el-button
+            type="primary"
+            @click="handleAddUser(addUserForm)"
+          >
+            Add
+          </el-button>
+        </span>
       </el-form-item>
     </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button
-          type="primary"
-          @click="() => (addUser(dialogValue), (dialogFormVisible = false))"
-        >
-          Add
-        </el-button>
-      </span>
-    </template>
   </el-dialog>
+
   <div class="pb-6 flex gap-4">
     <div class="w-72 mr-8">
       <el-input
@@ -155,7 +210,7 @@ watch(
     </el-button>
     <el-button
       class="my-2"
-      @click="() => (dialogFormVisible = true)"
+      @click="() => (dialogValue.visible = true)"
     >
       Add
     </el-button>
@@ -165,7 +220,7 @@ watch(
     :users="filteredUsers"
     :columns="tableData.columns"
     :handle-edit="editUser"
-    :handle-delete="deleteUser"
+    :handle-delete="handleDeleteUser"
     :is-loading="tableData.isLoading"
   >
   </user-table>
