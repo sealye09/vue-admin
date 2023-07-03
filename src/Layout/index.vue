@@ -71,16 +71,17 @@ function handleFullScreen() {
           class="hide-sidebar"
           @click="toggleSideBar"
         >
-          <el-icon size="24">
+          <el-icon
+            size="24"
+            class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
+          >
             <Icon
               v-if="store.isSiderBarOpen"
-              class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
               icon="heroicons:chevron-double-right"
             >
             </Icon>
             <Icon
               v-else
-              class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
               icon="heroicons:chevron-double-left"
             />
           </el-icon>
@@ -102,9 +103,17 @@ function handleFullScreen() {
           </el-icon>
           <el-icon
             size="24"
-            class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
+            class="hover:cursor-pointer hover:text-blue-500/80 transition-all"
+            @click="store.toggleColorMode"
           >
-            <Icon icon="heroicons:cog-6-tooth" />
+            <Icon
+              v-show="store.colorMode === 'dark'"
+              icon="heroicons:moon"
+            />
+            <Icon
+              v-show="store.colorMode === 'light'"
+              icon="heroicons:sun"
+            />
           </el-icon>
           <el-dropdown
             class="avatar"

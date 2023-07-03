@@ -20,16 +20,16 @@ const handleClick = async () => {
         <el-button
           type="primary"
           @click="num++"
-          >{{ num }}</el-button
-        >
+          >{{ num }}
+        </el-button>
       </div>
       <div class="flex gap-4 items-center">
         <span>pinia </span>
         <el-button
           type="primary"
           @click="count.increment"
-          >{{ count.num }}</el-button
-        >
+          >{{ count.num }}
+        </el-button>
       </div>
     </div>
   </div>
