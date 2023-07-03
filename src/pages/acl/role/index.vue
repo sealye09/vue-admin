@@ -3,6 +3,7 @@ import { reactive, computed, onMounted, ref, watch } from "vue";
 import { getRoles, addRole, deleteRoleById, updateRoleById } from "@/api/acl/role.js";
 import dataTable from "@/components/dataTable.vue";
 
+// ref reactive
 const tableData = reactive({
   data: [],
   total: 10,
@@ -37,8 +38,22 @@ const tableData = reactive({
   ],
 });
 
-const roleNameFilter = ref("");
+const addDialogValue = reactive({
+  roleName: "",
+  visible: false,
+});
 
+const editDialogValue = reactive({
+  id: "",
+  roleName: "",
+  visible: false,
+});
+
+const editRoleForm = ref();
+const roleNameFilter = ref("");
+const addRoleForm = ref();
+
+// computed
 const filteredRoles = computed(() => {
   return tableData.data.filter((role) => {
     const upperRoleName = role.roleName.toUpperCase();
@@ -47,23 +62,30 @@ const filteredRoles = computed(() => {
   });
 });
 
-const addRoleForm = ref();
-const addDialogValue = reactive({
-  roleName: "",
-  visible: false,
-});
+// watch
+watch(
+  () => [tableData.currentPage, tableData.pageSize],
+  async (newVal, oldVal) => {
+    fetchData();
+  },
+);
 
-const editRoleForm = ref();
-const editDialogValue = reactive({
-  id: "",
-  roleName: "",
-  visible: false,
-});
-
+// variables
 const rules = {
   roleName: [{ required: true, message: "角色名不能为空", trigger: "blur" }],
 };
 
+// functions
+const fetchData = async () => {
+  tableData.isLoading = true;
+  const res = await getRoles(tableData.currentPage, tableData.pageSize);
+  console.log(res);
+  tableData.data = res.data.records;
+  tableData.total = res.data.total;
+  tableData.isLoading = false;
+};
+
+// events handlers
 const handleAddRole = async (formRef) => {
   if (!formRef) return;
   await formRef.validate(async (valid, fields) => {
@@ -137,19 +159,6 @@ const handleDeleteRole = async (idx, data) => {
   }
 };
 
-onMounted(async () => {
-  fetchData();
-});
-
-const fetchData = async () => {
-  tableData.isLoading = true;
-  const res = await getRoles(tableData.currentPage, tableData.pageSize);
-  console.log(res);
-  tableData.data = res.data.records;
-  tableData.total = res.data.total;
-  tableData.isLoading = false;
-};
-
 const handleSizeChange = (val) => {
   tableData.currentPage = 1;
   console.log(`${val} items per page`);
@@ -163,12 +172,10 @@ const handleSelectionChange = (val) => {
   console.log("get value:", val);
 };
 
-watch(
-  () => [tableData.currentPage, tableData.pageSize],
-  async (newVal, oldVal) => {
-    fetchData();
-  },
-);
+// lifecycle hooks
+onMounted(async () => {
+  fetchData();
+});
 </script>
 
 <template>

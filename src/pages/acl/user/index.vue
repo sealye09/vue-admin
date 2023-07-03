@@ -3,6 +3,7 @@ import { reactive, computed, onMounted, ref, watch } from "vue";
 import { getUsers, addUser, deleteUserById, updateUserById, deleteUsers } from "@/api/acl/user.js";
 import dataTable from "@/components/dataTable.vue";
 
+// ref reactive
 const tableData = reactive({
   data: [],
   total: 10,
@@ -43,8 +44,16 @@ const tableData = reactive({
   ],
 });
 
-const usernameFilter = ref("");
+const dialogValue = reactive({
+  username: "",
+  password: "",
+  visible: false,
+});
 
+const usernameFilter = ref("");
+const addUserForm = ref();
+
+// computed
 const filteredUsers = computed(() => {
   return tableData.data.filter((user) => {
     const upperUsername = user.username.toUpperCase();
@@ -53,18 +62,35 @@ const filteredUsers = computed(() => {
   });
 });
 
-const addUserForm = ref();
-const dialogValue = reactive({
-  username: "",
-  password: "",
-  visible: false,
-});
+// watch
+watch(
+  () => [tableData.currentPage, tableData.pageSize],
+  async (newVal, oldVal) => {
+    fetchData();
+  },
+);
 
+// variables
 const rules = {
   username: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
   password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
 };
 
+// functions
+const fetchData = async () => {
+  tableData.isLoading = true;
+  const res = await getUsers(tableData.currentPage, tableData.pageSize);
+  console.log(res);
+  tableData.data = res.data.records;
+  tableData.total = res.data.total;
+  tableData.isLoading = false;
+};
+
+const clearFilter = () => {
+  usernameFilter.value = "";
+};
+
+// event handlers
 const handleAddUser = async (formRef) => {
   if (!formRef) return;
   await formRef.validate(async (valid, fields) => {
@@ -94,7 +120,7 @@ const handleAddUser = async (formRef) => {
   dialogValue.password = "";
 };
 
-const editUser = (idx, data) => {
+const handleEditUser = (idx, data) => {
   console.log("get edit data:", idx, data);
   const id = data.id;
 };
@@ -117,25 +143,8 @@ const handleDeleteUser = async (idx, data) => {
   }
 };
 
-const clearFilter = () => {
-  usernameFilter.value = "";
-};
-
 const handleSelectionChange = (val) => {
   console.log("get value:", val);
-};
-
-onMounted(async () => {
-  fetchData();
-});
-
-const fetchData = async () => {
-  tableData.isLoading = true;
-  const res = await getUsers(tableData.currentPage, tableData.pageSize);
-  console.log(res);
-  tableData.data = res.data.records;
-  tableData.total = res.data.total;
-  tableData.isLoading = false;
 };
 
 const handleSizeChange = (val) => {
@@ -147,12 +156,10 @@ const handleCurrentChange = (val) => {
   console.log(`current page: ${val}`);
 };
 
-watch(
-  () => [tableData.currentPage, tableData.pageSize],
-  async (newVal, oldVal) => {
-    fetchData();
-  },
-);
+// lifecycle hooks
+onMounted(async () => {
+  fetchData();
+});
 </script>
 
 <template>
@@ -260,7 +267,7 @@ watch(
     :columns="tableData.columns"
     :is-loading="tableData.isLoading"
     :is-slectable="tableData.isSlectable"
-    @on-edit="editUser"
+    @on-edit="handleEditUser"
     @on-delete="handleDeleteUser"
     @on-selection-change="handleSelectionChange"
   ></data-table>

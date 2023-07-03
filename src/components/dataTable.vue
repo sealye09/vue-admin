@@ -44,6 +44,7 @@ const onDelete = (index, row) => {
       v-if="props.isSlectable"
       type="selection"
     ></el-table-column>
+
     <el-table-column
       v-for="(column, index) in props.columns"
       :sortable="column.sortable"
