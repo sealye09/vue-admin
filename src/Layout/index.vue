@@ -34,6 +34,10 @@ async function handleLogout() {
   router.replace("/login");
 }
 
+window.addEventListener("fullscreenchange", () => {
+  fullscreen.value = !fullscreen.value;
+});
+
 function handleFullScreen() {
   let element = document.documentElement;
   if (fullscreen.value) {
@@ -58,7 +62,6 @@ function handleFullScreen() {
       element.msRequestFullscreen();
     }
   }
-  fullscreen.value = !fullscreen.value;
 }
 </script>
 
@@ -70,6 +73,7 @@ function handleFullScreen() {
         <div
           class="hide-sidebar"
           @click="toggleSideBar"
+          :title="store.isSiderBarOpen ? '显示菜单' : '隐藏菜单'"
         >
           <el-icon
             size="24"
@@ -92,26 +96,36 @@ function handleFullScreen() {
             size="24"
             class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
             @click="handleFullScreen"
+            :title="fullscreen ? '退出全屏' : '全屏'"
           >
-            <Icon icon="heroicons:arrows-pointing-out" />
+            <Icon
+              v-if="fullscreen"
+              icon="heroicons:arrows-pointing-in"
+            />
+            <Icon
+              v-else
+              icon="heroicons:arrows-pointing-out"
+            />
           </el-icon>
           <el-icon
             size="24"
             class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
+            title="切换语言"
           >
             <Icon icon="heroicons:language" />
           </el-icon>
           <el-icon
             size="24"
-            class="hover:cursor-pointer hover:text-blue-500/80 transition-all"
+            class="hover:cursor-pointer hover:text-blue-500/80 transition-colors"
             @click="store.toggleColorMode"
+            title="切换主题"
           >
             <Icon
-              v-show="store.colorMode === 'dark'"
+              v-if="store.colorMode === 'dark'"
               icon="heroicons:moon"
             />
             <Icon
-              v-show="store.colorMode === 'light'"
+              v-else
               icon="heroicons:sun"
             />
           </el-icon>
@@ -137,13 +151,19 @@ function handleFullScreen() {
             </div>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="toPersonCenter">
+                <el-dropdown-item
+                  title="个人中心"
+                  @click="toPersonCenter"
+                >
                   <el-icon>
                     <Icon icon="heroicons:user"></Icon>
                   </el-icon>
                   个人中心
                 </el-dropdown-item>
-                <el-dropdown-item @click="handleLogout">
+                <el-dropdown-item
+                  title="退出"
+                  @click="handleLogout"
+                >
                   <el-icon>
                     <Icon icon="heroicons:arrow-left-on-rectangle"></Icon>
                   </el-icon>
