@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, computed, onMounted, ref, watch } from "vue";
 import { getUsers, addUser, deleteUserById, updateUserById } from "@/api/acl/user.js";
-import userTable from "./userTable.vue";
+import dataTable from "@/components/dataTable.vue";
 
 const tableData = reactive({
   data: [],
@@ -159,6 +159,7 @@ watch(
     <el-form
       :rules="rules"
       :model="dialogValue"
+      @submit.enter.prevent
       label-position="right"
       label-width="100px"
       ref="addUserForm"
@@ -216,14 +217,13 @@ watch(
     </el-button>
   </div>
 
-  <user-table
-    :users="filteredUsers"
+  <data-table
+    :data="filteredUsers"
     :columns="tableData.columns"
     :handle-edit="editUser"
     :handle-delete="handleDeleteUser"
     :is-loading="tableData.isLoading"
-  >
-  </user-table>
+  ></data-table>
   <el-pagination
     class="mt-6 mb-4 w-full"
     background

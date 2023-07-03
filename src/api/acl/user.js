@@ -50,3 +50,13 @@ export async function updateUserById(data) {
   const res = await request.put(`/admin/acl/user/update`, data);
   return res;
 }
+
+/**
+ * 分配角色
+ * @param {object.<roleId[], userId>} data
+ * @typedef {string|number} userId
+ * @typedef {string|number} roleId
+ */
+export async function assignRole(data) {
+  const res = await request.post(`/admin/acl/user/doAssignRole`, data);
+}

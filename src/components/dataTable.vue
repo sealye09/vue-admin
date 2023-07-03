@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps({
-  users: {
+  data: {
     type: Array,
     required: true,
   },
@@ -25,7 +25,7 @@ const props = defineProps({
 
 <template>
   <el-table
-    :data="props.users"
+    :data="props.data"
     border
     stripe
   >
