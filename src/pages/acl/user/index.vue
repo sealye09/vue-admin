@@ -1,7 +1,13 @@
 <script setup>
 import { reactive, computed, onMounted, ref, watch } from "vue";
 import { toString } from "lodash";
-import { getUsers, addUser, deleteUserById, updateUserById, deleteUsers } from "@/api/acl/user.js";
+import {
+  getUsers,
+  addUser,
+  deleteUserById,
+  updateUserById,
+  deleteUsersByIds,
+} from "@/api/acl/user.js";
 import dataTable from "@/components/dataTable.vue";
 
 // ref reactive
@@ -23,16 +29,6 @@ const tableData = reactive({
       width: 120,
     },
     {
-      prop: "createTime",
-      label: "创建时间",
-      sortable: true,
-    },
-    {
-      prop: "updateTime",
-      label: "更新时间",
-      sortable: true,
-    },
-    {
       prop: "username",
       label: "用户名",
       sortable: true,
@@ -40,6 +36,16 @@ const tableData = reactive({
     {
       prop: "roleName",
       label: "角色名称",
+      sortable: true,
+    },
+    {
+      prop: "createTime",
+      label: "创建时间",
+      sortable: true,
+    },
+    {
+      prop: "updateTime",
+      label: "更新时间",
       sortable: true,
     },
   ],
@@ -56,6 +62,8 @@ const filters = reactive({
   roleName: "",
   id: "",
 });
+
+const selectedRows = ref([]);
 
 const addUserForm = ref();
 
@@ -155,8 +163,29 @@ const handleDeleteUser = async (idx, data) => {
   }
 };
 
+const handleDeleteManyUsers = async () => {
+  console.log("delete many:", selectedRows.value);
+  const selectedIds = selectedRows.value.map((row) => row.id);
+  console.log(selectedIds);
+  const res = await deleteUsersByIds(selectedIds);
+  console.log(res);
+  if (res.code === 200) {
+    ElMessage({
+      type: "success",
+      message: "删除成功",
+    });
+    fetchData();
+  } else {
+    ElMessage({
+      type: "error",
+      message: "删除失败",
+    });
+  }
+};
+
 const handleSelectionChange = (val) => {
   console.log("get value:", val);
+  selectedRows.value = val;
 };
 
 const handleSizeChange = (val) => {
@@ -180,7 +209,7 @@ onMounted(async () => {
     v-model="dialogValue.visible"
     :close-on-click-modal="false"
     @submit="handleAddUser"
-    title="Add a user"
+    title="添加用户"
   >
     <el-form
       :rules="rules"
@@ -192,17 +221,25 @@ onMounted(async () => {
     >
       <el-form-item
         prop="username"
-        label="Username"
+        label="用户名"
         required
       >
-        <el-input v-model="dialogValue.username" />
+        <el-input
+          v-model="dialogValue.username"
+          placeholder="Please input username"
+        />
       </el-form-item>
       <el-form-item
         prop="password"
-        label="Password"
+        label="密码"
         required
       >
-        <el-input v-model="dialogValue.password" />
+        <el-input
+          v-model="dialogValue.password"
+          type="password"
+          placeholder="Please input password"
+          show-password
+        />
       </el-form-item>
       <el-form-item class="">
         <span class="dialog-footer">
@@ -267,7 +304,7 @@ onMounted(async () => {
       <el-button
         class="my-2"
         type="danger"
-        @click="() => console.log('delete many')"
+        @click="handleDeleteManyUsers"
       >
         批量删除
       </el-button>

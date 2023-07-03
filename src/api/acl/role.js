@@ -32,10 +32,20 @@ export async function deleteRoleById(id) {
 }
 
 /**
+ * 根据id列表批量删除角色
+ * @param {number[]|string[]} ids
+ * @returns
+ */
+export async function deleteRolesByIds(ids) {
+  const res = await request.delete(`/admin/acl/role/batchRemove`, { data: ids });
+  return res;
+}
+
+/**
  * 根据id修改角色
- * @param {number|string} id 
- * @param {string} roleName 
- * @returns 
+ * @param {number|string} id
+ * @param {string} roleName
+ * @returns
  */
 export async function updateRoleById(id, roleName) {
   const res = await request.put(`/admin/acl/role/update`, { id, roleName });

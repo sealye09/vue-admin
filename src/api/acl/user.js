@@ -46,7 +46,7 @@ export async function deleteUserById(id) {
  * @param {number[]|string[]} idList
  * @returns
  */
-export async function deleteUsers(idList) {
+export async function deleteUsersByIds(idList) {
   const res = await request.delete(`/admin/acl/user/batchRemove`, {
     data: idList,
   });

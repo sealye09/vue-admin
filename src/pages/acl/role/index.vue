@@ -1,7 +1,13 @@
 <script setup>
 import { reactive, computed, onMounted, ref, watch } from "vue";
 import { toString } from "lodash";
-import { getRoles, addRole, deleteRoleById, updateRoleById } from "@/api/acl/role.js";
+import {
+  getRoles,
+  addRole,
+  deleteRoleById,
+  updateRoleById,
+  deleteRolesByIds,
+} from "@/api/acl/role.js";
 import dataTable from "@/components/dataTable.vue";
 
 // ref reactive
@@ -22,6 +28,11 @@ const tableData = reactive({
       width: 120,
     },
     {
+      prop: "roleName",
+      label: "角色名称",
+      sortable: true,
+    },
+    {
       prop: "createTime",
       label: "创建时间",
       sortable: true,
@@ -29,11 +40,6 @@ const tableData = reactive({
     {
       prop: "updateTime",
       label: "更新时间",
-      sortable: true,
-    },
-    {
-      prop: "roleName",
-      label: "角色名称",
       sortable: true,
     },
   ],
@@ -49,6 +55,8 @@ const editDialogValue = reactive({
   roleName: "",
   visible: false,
 });
+
+const selectedRows = ref([]);
 
 const filters = reactive({
   roleName: "",
@@ -169,6 +177,26 @@ const handleDeleteRole = async (idx, data) => {
   }
 };
 
+const handleDeleteManyRoles = async () => {
+  console.log("delete many:", selectedRows.value);
+  const selectedIds = selectedRows.value.map((row) => row.id);
+  console.log(selectedIds);
+  const res = await deleteRolesByIds(selectedIds);
+  console.log(res);
+  if (res.code === 200) {
+    ElMessage({
+      type: "success",
+      message: "删除成功",
+    });
+    fetchData();
+  } else {
+    ElMessage({
+      type: "error",
+      message: "删除失败",
+    });
+  }
+};
+
 const handleSizeChange = (val) => {
   tableData.currentPage = 1;
   console.log(`${val} items per page`);
@@ -180,6 +208,7 @@ const handleCurrentChange = (val) => {
 
 const handleSelectionChange = (val) => {
   console.log("get value:", val);
+  selectedRows.value = val;
 };
 
 // lifecycle hooks
@@ -301,7 +330,7 @@ onMounted(async () => {
       <el-button
         class="my-2"
         type="danger"
-        @click="() => console.log('delete many')"
+        @click="() => handleDeleteManyRoles()"
       >
         批量删除
       </el-button>
