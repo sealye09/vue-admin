@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from "vue";
 import useCountStore from "@/store/modules/countStore.js";
-import request from "@/utils/request";
+import { getMenuList } from "@/api/user/user.js";
 const count = useCountStore();
 const num = ref(0);
 
-const handleClick = () => {
-  request.get("admin/product/test/read");
+const handleClick = async () => {
+  const res = await getMenuList();
+  console.log(res);
 };
 </script>
 
@@ -20,7 +21,7 @@ const handleClick = () => {
   </div>
 
   <button
-    class="bg-red-300 px-4 py-2 rounded-md text-white"
+    class="bg-red-300 px-4 py-1 rounded-md text-white"
     @click="handleClick"
   >
     Post

@@ -71,7 +71,7 @@ export const basicRoutes = [
 ];
 
 // 异步路由
-export const asnycRoutes = [
+export const asyncRoutes = [
   {
     path: "/acl",
     name: "Acl",
@@ -108,6 +108,52 @@ export const asnycRoutes = [
           title: "菜单管理",
           icon: "heroicons:squares-2x2",
         },
+      },
+
+      // test
+      {
+        path: "/acl/activity",
+        name: "Activity",
+        component: () => import("@/pages/acl/activity/index.vue"),
+        meta: {
+          title: "活动管理",
+        },
+        children: [
+          {
+            path: "/acl/activity/edit",
+            name: "ActivityEdit",
+            component: () => import("@/pages/acl/activity/activityEdit/index.vue"),
+            meta: {
+              title: "活动编辑",
+            },
+            children: [
+              {
+                path: "/acl/activity/add",
+                name: "ActivityAdd",
+                component: () => import("@/pages/acl/activity/activityAdd/index.vue"),
+                meta: {
+                  title: "活动添加",
+                },
+              },
+              {
+                path: "/acl/activity/111",
+                name: "111",
+                component: () => import("@/pages/acl/activity/111/index.vue"),
+                meta: {
+                  title: "111",
+                },
+              },
+            ],
+          },
+          {
+            path: "/acl/activity/2222",
+            name: "2222",
+            component: () => import("@/pages/acl/activity/2222/index.vue"),
+            meta: {
+              title: "2222",
+            },
+          },
+        ],
       },
     ],
   },

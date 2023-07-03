@@ -35,7 +35,7 @@ async function handleLogout() {
 <template>
   <el-container class="main-container">
     <side-bar :isCollapse="store.isSiderBarOpen" />
-    <el-container>
+    <el-container class="content h-screen">
       <el-header class="bg-gray-100">
         <div
           class="hide-sidebar"
@@ -44,12 +44,12 @@ async function handleLogout() {
           <el-icon size="24">
             <Icon
               v-if="store.isSiderBarOpen"
-              icon="bi:text-indent-left"
+              icon="heroicons:chevron-double-right"
             >
             </Icon>
             <Icon
               v-else
-              icon="bi:text-indent-right"
+              icon="heroicons:chevron-double-left"
             />
           </el-icon>
         </div>
@@ -86,18 +86,32 @@ async function handleLogout() {
             </div>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="toPersonCenter">个人中心</el-dropdown-item>
-                <el-dropdown-item @click="handleLogout">退出</el-dropdown-item>
+                <el-dropdown-item @click="toPersonCenter">
+                  <el-icon>
+                    <Icon icon="heroicons:user"></Icon>
+                  </el-icon>
+                  个人中心
+                </el-dropdown-item>
+                <el-dropdown-item @click="handleLogout">
+                  <el-icon>
+                    <Icon icon="heroicons:arrow-left-on-rectangle"></Icon>
+                  </el-icon>
+                  退出
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </div>
       </el-header>
-      <el-main>
-        <BreadCrumb> </BreadCrumb>
-        <el-divider />
-        <router-view></router-view>
-      </el-main>
+      <el-scrollbar class="scrollbar">
+        <el-main>
+          <BreadCrumb> </BreadCrumb>
+          <el-divider />
+          <div class='p-5 border rounded-md shadow-sm'>
+            <router-view></router-view>
+          </div>
+        </el-main>
+      </el-scrollbar>
     </el-container>
   </el-container>
 </template>
@@ -127,5 +141,10 @@ async function handleLogout() {
   height: 100%;
   cursor: pointer;
   border-radius: 50%;
+}
+
+.scrollbar {
+  width: 100%;
+  height: 100%;
 }
 </style>

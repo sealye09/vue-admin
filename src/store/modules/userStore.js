@@ -2,19 +2,20 @@ import { reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import cloneDeep from "lodash/cloneDeep";
 
-import { asnycRoutes, basicRoutes, anyRoute } from "@/router/routes.js";
+import { asyncRoutes, basicRoutes, anyRoute } from "@/router/routes.js";
 import router from "@/router/index.js";
 import {
   login as loginReq,
   logout as logoutReq,
   getUserInfo as userInfoReq,
   getMenuList,
-} from "@/api/user";
+} from "@/api/user/user.js";
 
 //用于过滤当前用户需要展示的异步路由
 function filterAsyncRoutes(asnycRoutes, routes) {
   return asnycRoutes.filter((item) => {
     if (routes.includes(item.name)) {
+      console.log("name", item.name);
       if (item.children && item.children.length > 0) {
         //硅谷333账号:product\trademark\attr\sku
         item.children = filterAsyncRoutes(item.children, routes);
@@ -53,8 +54,10 @@ const useUserStore = defineStore({
           avatar: res.data.avatar,
           roles: res.data.roles,
         };
+        console.log(res.data.routes);
+        console.log(asyncRoutes);
         //计算当前用户需要展示的异步路由
-        const userRoutes = filterAsyncRoutes(cloneDeep(asnycRoutes), res.data.routes);
+        const userRoutes = filterAsyncRoutes(cloneDeep(asyncRoutes), res.data.routes);
 
         //菜单需要的数据整理完毕
         this.menu = [...basicRoutes, ...userRoutes, anyRoute];
@@ -77,7 +80,6 @@ const useUserStore = defineStore({
       this.info = null;
       this.menu = null;
     },
-
   },
   persist: {
     paths: ["token"],

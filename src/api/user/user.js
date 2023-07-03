@@ -1,4 +1,3 @@
-//统一管理咱们项目用户相关的接口
 import request from "@/utils/request";
 
 //登录接口
@@ -21,6 +20,7 @@ export async function getUserInfo() {
   return res;
 }
 
+// 获取菜单列表
 export async function getMenuList() {
   const res = await request.get("/admin/acl/index/menu");
   return res;
