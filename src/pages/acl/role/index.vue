@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, computed, onMounted, ref, watch } from "vue";
+import { toString } from "lodash";
 import { getRoles, addRole, deleteRoleById, updateRoleById } from "@/api/acl/role.js";
 import dataTable from "@/components/dataTable.vue";
 
@@ -49,16 +50,20 @@ const editDialogValue = reactive({
   visible: false,
 });
 
+const filters = reactive({
+  roleName: "",
+  id: "",
+});
+
 const editRoleForm = ref();
-const roleNameFilter = ref("");
 const addRoleForm = ref();
 
 // computed
 const filteredRoles = computed(() => {
   return tableData.data.filter((role) => {
     const upperRoleName = role.roleName.toUpperCase();
-    const upperRoleNameFilter = roleNameFilter.value.toUpperCase();
-    return upperRoleName.includes(upperRoleNameFilter);
+    const upperRoleNameFilter = filters.roleName.toUpperCase();
+    return upperRoleName.includes(upperRoleNameFilter) && toString(role.id).includes(filters.id);
   });
 });
 
@@ -83,6 +88,11 @@ const fetchData = async () => {
   tableData.data = res.data.records;
   tableData.total = res.data.total;
   tableData.isLoading = false;
+};
+
+const clearFilters = () => {
+  filters.roleName = "";
+  filters.id = "";
 };
 
 // events handlers
@@ -250,23 +260,52 @@ onMounted(async () => {
       </el-form-item>
     </el-form>
   </el-dialog>
-  <div class="pb-6 flex gap-4">
-    <div class="w-72 mr-8">
-      <el-input
-        type="text"
-        v-model="roleNameFilter"
+
+  <div class="pb-6 flex flex-col gap-4">
+    <div class="flex">
+      <div class="block w-72 mr-8">
+        <el-input
+          type="text"
+          v-model="filters.roleName"
+          class="my-2"
+          placeholder="search user by role name"
+          clearable
+        />
+      </div>
+      <div class="block w-72 mr-8">
+        <el-input
+          type="text"
+          v-model="filters.id"
+          class="my-2"
+          placeholder="search user by id"
+          clearable
+        />
+      </div>
+      <el-button
+        @click="clearFilters"
+        type="primary"
         class="my-2"
-        placeholder="search role"
-        clearable
-      />
+      >
+        Reset Filters
+      </el-button>
     </div>
 
-    <el-button
-      class="my-2"
-      @click="() => (addDialogValue.visible = true)"
-    >
-      Add
-    </el-button>
+    <div class="flex gap-2">
+      <el-button
+        class="my-2"
+        type="primary"
+        @click="() => (addDialogValue.visible = true)"
+      >
+        添加用户
+      </el-button>
+      <el-button
+        class="my-2"
+        type="danger"
+        @click="() => console.log('delete many')"
+      >
+        批量删除
+      </el-button>
+    </div>
   </div>
 
   <data-table

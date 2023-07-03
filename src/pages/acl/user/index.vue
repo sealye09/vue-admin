@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, computed, onMounted, ref, watch } from "vue";
+import { toString } from "lodash";
 import { getUsers, addUser, deleteUserById, updateUserById, deleteUsers } from "@/api/acl/user.js";
 import dataTable from "@/components/dataTable.vue";
 
@@ -50,15 +51,24 @@ const dialogValue = reactive({
   visible: false,
 });
 
-const usernameFilter = ref("");
+const filters = reactive({
+  username: "",
+  roleName: "",
+  id: "",
+});
+
 const addUserForm = ref();
 
 // computed
 const filteredUsers = computed(() => {
   return tableData.data.filter((user) => {
     const upperUsername = user.username.toUpperCase();
-    const upperUsernameFilter = usernameFilter.value.toUpperCase();
-    return upperUsername.includes(upperUsernameFilter);
+    const upperUsernameFilter = filters.username.toUpperCase();
+    return (
+      upperUsername.includes(upperUsernameFilter) &&
+      toString(user.roleName).includes(filters.roleName) &&
+      toString(user.id).includes(filters.id)
+    );
   });
 });
 
@@ -86,8 +96,10 @@ const fetchData = async () => {
   tableData.isLoading = false;
 };
 
-const clearFilter = () => {
-  usernameFilter.value = "";
+const clearFilters = () => {
+  filters.username = "";
+  filters.roleName = "";
+  filters.id = "";
 };
 
 // event handlers
@@ -211,7 +223,7 @@ onMounted(async () => {
       <div class="block w-72 mr-8">
         <el-input
           type="text"
-          v-model="usernameFilter"
+          v-model="filters.username"
           class="my-2"
           placeholder="search user by username"
           clearable
@@ -220,23 +232,23 @@ onMounted(async () => {
       <div class="block w-72 mr-8">
         <el-input
           type="text"
-          v-model="usernameFilter"
+          v-model="filters.roleName"
           class="my-2"
-          placeholder="search user by username"
+          placeholder="search user by role name"
           clearable
         />
       </div>
       <div class="block w-72 mr-8">
         <el-input
           type="text"
-          v-model="usernameFilter"
+          v-model="filters.id"
           class="my-2"
-          placeholder="search user by username"
+          placeholder="search user by id"
           clearable
         />
       </div>
       <el-button
-        @click="clearFilter"
+        @click="clearFilters"
         type="primary"
         class="my-2"
       >

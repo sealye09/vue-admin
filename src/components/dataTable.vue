@@ -84,12 +84,26 @@ const onDelete = (index, row) => {
       </template>
     </el-table-column>
     <template #empty>
-      <el-skeleton
-        v-show="props.isLoading"
-        :rows="8"
-        animated
+      <el-row
+        v-if="props.isLoading"
+        :gutter="20"
       >
-      </el-skeleton>
+        <el-col
+          v-for="item in 4"
+          :key="item"
+        >
+          <el-skeleton
+            :rows="5"
+            animated
+          />
+        </el-col>
+      </el-row>
+      <div
+        v-else
+        style="text-align: center"
+      >
+        暂无数据
+      </div>
     </template>
   </el-table>
 </template>
