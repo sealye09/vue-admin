@@ -64,6 +64,16 @@ export async function updateUserById(data) {
 }
 
 /**
+ * 获取用户角色列表
+ * @param {number|string} userId
+ * @returns {object}
+ */
+export async function getUserRoles(userId) {
+  const res = await request.get(`/admin/acl/user/toAssign/${userId}`);
+  return res;
+}
+
+/**
  * 分配角色
  * @param {object.<roleId[], userId>} data
  * @typedef {string|number} userId
@@ -71,4 +81,5 @@ export async function updateUserById(data) {
  */
 export async function assignRole(data) {
   const res = await request.post(`/admin/acl/user/doAssignRole`, data);
+  return res;
 }

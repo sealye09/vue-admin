@@ -7,6 +7,8 @@ import {
   deleteUserById,
   updateUserById,
   deleteUsersByIds,
+  getUserRoles,
+  assignRole,
 } from "@/api/acl/user.js";
 import { getRoles } from "@/api/acl/role.js";
 import dataTable from "@/components/dataTable.vue";
@@ -57,11 +59,6 @@ const tableData = reactive({
   ],
 });
 
-const roles = reactive({
-  data: [],
-  checkAll: false,
-});
-
 const addUserDialogValue = reactive({
   username: "",
   password: "",
@@ -73,7 +70,10 @@ const editUserDrawerValue = reactive({
   id: "",
   name: "",
   username: "",
-  roles: [],
+  roleNames: [],
+  allRoles: [],
+  checkAllRoles: false,
+  isIndeterminate: false,
   visible: false,
 });
 
@@ -137,12 +137,6 @@ const fetchData = async () => {
   tableData.isLoading = false;
 };
 
-const fetchRoles = async () => {
-  const res = await getRoles(1, 100);
-  console.log(res);
-  roles.data = res.data.records;
-};
-
 const clearFilters = () => {
   filters.username = "";
   filters.roleName = "";
@@ -179,12 +173,16 @@ const handleAddUser = async (formRef) => {
   addUserDialogValue.password = "";
 };
 
-const handleEditUserClick = (idx, data) => {
+// 点击Edit按钮事件
+const handleEditUserClick = async (idx, data) => {
   console.log("get edit data:", idx, data);
   editUserDrawerValue.id = data.id;
   editUserDrawerValue.name = data.name;
   editUserDrawerValue.username = data.username;
-  editUserDrawerValue.roles = data.roleName.split(",");
+  const res = await getUserRoles(editUserDrawerValue.id);
+  console.log(res);
+  editUserDrawerValue.roleNames = res.data.assignRoles.map((role) => role.roleName);
+  editUserDrawerValue.allRoles = res.data.allRolesList;
   editUserDrawerValue.visible = true;
 };
 
@@ -274,10 +272,62 @@ const handleCurrentChange = (val) => {
   console.log(`current page: ${val}`);
 };
 
+const handleAllCheckChange = (value) => {
+  console.log(value);
+  console.log(editUserDrawerValue.roleNames);
+  const checkedCount = value.length;
+  const allCount = editUserDrawerValue.allRoles.length;
+  editUserDrawerValue.checkAllRoles = checkedCount === allCount;
+  editUserDrawerValue.isIndeterminate = checkedCount > 0 && checkedCount < allCount;
+};
+
+const handleRoleCheckChange = (val) => {
+  console.log(val);
+  editUserDrawerValue.roleNames = val
+    ? editUserDrawerValue.allRoles.map((role) => role.roleName)
+    : [];
+  console.log(editUserDrawerValue.roleNames);
+  editUserDrawerValue.isIndeterminate = false;
+};
+
+// 提交修改用户角色
+const handleRoleChangeComfirm = async () => {
+  const roleIds = editUserDrawerValue.allRoles
+    .filter((role) => editUserDrawerValue.roleNames.includes(role.roleName))
+    .map((role) => role.id);
+
+  const res = await assignRole({
+    userId: editUserDrawerValue.id,
+    roleIdList: roleIds,
+  });
+  if (res.code === 200) {
+    ElMessage({
+      type: "success",
+      message: "更新成功",
+    });
+    editUserDrawerValue.visible = false;
+    fetchData();
+  } else {
+    ElMessage({
+      type: "error",
+      message: `更新失败: ${res.data}`,
+    });
+  }
+};
+
+const handleComfirm = async (formRef) => {
+  if (editUserDrawerValue.mode === "info") {
+    console.log("info comfirm");
+    await handleEditUserConfirm(formRef);
+  } else {
+    console.log("role comfirm");
+    handleRoleChangeComfirm();
+  }
+};
+
 // lifecycle hooks
 onMounted(async () => {
   fetchData();
-  fetchRoles();
 });
 </script>
 
@@ -344,7 +394,6 @@ onMounted(async () => {
         v-model="editUserDrawerValue.mode"
         @tab-click="
           (tab, event) => {
-            console.log(tab, event);
             editUserDrawerValue.mode = tab.props.name;
           }
         "
@@ -405,30 +454,22 @@ onMounted(async () => {
           label-width="100px"
         >
           <el-checkbox
-            v-model="roles.checkAll"
-            @change="
-              (val) => {
-                editUserDrawerValue.roles = val ? roles.data : [];
-              }
-            "
+            v-model="editUserDrawerValue.checkAllRoles"
+            :indeterminate="editUserDrawerValue.isIndeterminate"
+            @change="handleRoleCheckChange"
           >
             全选
           </el-checkbox>
           <el-checkbox-group
-            v-if="roles.length !== 0 && roles[0] !== ''"
-            v-model="editUserDrawerValue.roles"
-            @change="
-              (value) => {
-                const checkedCount = value.length;
-                roles.checkAll = checkedCount === roles.length;
-              }
-            "
+            v-model="editUserDrawerValue.roleNames"
+            @change="handleAllCheckChange"
           >
             <el-checkbox
-              v-for="role in roles.data"
+              v-for="role in editUserDrawerValue.allRoles"
               :key="role.id"
               :label="role.roleName"
-              >{{ role.roleName }}
+            >
+              {{ role.roleName }}
             </el-checkbox>
           </el-checkbox-group>
         </el-form>
@@ -439,7 +480,7 @@ onMounted(async () => {
         <el-button @click="editUserDrawerValue.visible = false">取消</el-button>
         <el-button
           type="primary"
-          @click="handleEditUserConfirm(editUserInfoForm)"
+          @click="handleComfirm(editUserInfoForm)"
         >
           确认
         </el-button>
