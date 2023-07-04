@@ -34,7 +34,7 @@ export async function addUser(data) {
 /**
  * 删除用户
  * @param {number|string} id
- * @returns
+ * @returns {object}
  */
 export async function deleteUserById(id) {
   const res = await request.delete(`/admin/acl/user/remove/${id}`);
@@ -44,7 +44,7 @@ export async function deleteUserById(id) {
 /**
  * 批量删除用户
  * @param {number[]|string[]} idList
- * @returns
+ * @returns {object}
  */
 export async function deleteUsersByIds(idList) {
   const res = await request.delete(`/admin/acl/user/batchRemove`, {
@@ -56,7 +56,7 @@ export async function deleteUsersByIds(idList) {
 /**
  * 修改用户
  * @param {object} data
- * @returns
+ * @returns {object}
  */
 export async function updateUserById(data) {
   const res = await request.put(`/admin/acl/user/update`, data);
