@@ -1,5 +1,5 @@
 <template>
-  activity Edit
+  <span class="text-xl text-amber-600 hover:text-orange-600/80">Edit</span>
   <router-view></router-view>
 </template>
 

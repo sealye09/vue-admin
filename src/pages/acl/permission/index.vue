@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>alc-permission</div>
+  <span class="text-xl text-amber-600 hover:text-orange-600/80">Permission</span>
 </template>
 
 <style lang="scss" scoped></style>
