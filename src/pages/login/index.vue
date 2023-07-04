@@ -80,4 +80,9 @@ const handleSubmit = async (e) => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.login {
+  background: url("../../assets/images/login-bg.jpg") no-repeat center center;
+  background-size: cover;
+}
+</style>
