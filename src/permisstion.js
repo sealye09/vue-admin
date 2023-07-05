@@ -8,12 +8,14 @@ nprogress.configure({ showSpinner: false });
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
-  document.title = `后台管理 - ${to.meta.title}`;
+  if (!!to.meta.title) {
+    document.title = `后台管理 - ${to.meta.title}`;
+  }
   nprogress.start();
 
   const token = userStore.token;
   const info = userStore.info;
-  
+
   // 用户登录判断
   if (token) {
     // 登录成功,访问login,不能访问,指向首页
