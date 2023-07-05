@@ -6,6 +6,7 @@ import dataTable from "@/components/dataTable.vue";
 const data = reactive({
   permissions: [],
   isLoading: false,
+  rowKey: "id",
   columns: [
     {
       prop: "id",
@@ -54,6 +55,7 @@ onMounted(() => {
     :columns="data.columns"
     :is-loading="data.isLoading"
     :tree="true"
+    :row-key="data.rowKey"
   ></data-table>
 </template>
 

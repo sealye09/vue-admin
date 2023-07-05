@@ -62,6 +62,7 @@ const tableData = reactive({
 const addUserDialogValue = reactive({
   username: "",
   password: "",
+  name: "",
   visible: false,
 });
 
@@ -116,11 +117,13 @@ const rules = {
     { required: true, message: "用户名不能为空", trigger: "blur" },
     {
       validator: (rule, value, callback) => {
-        if (value.length < 5) {
-          callback(new Error("用户名长度不能小于5"));
-        } else {
-          callback();
-        }
+        setTimeout(() => {
+          if (value.length < 5) {
+            callback(new Error("用户名长度不能小于5位"));
+          } else {
+            callback();
+          }
+        }, 1000);
       },
     },
   ],
@@ -151,6 +154,7 @@ const handleAddUser = async (formRef) => {
       console.log("submit!");
       const res = await addUser({
         username: addUserDialogValue.username,
+        name: addUserDialogValue.name,
         password: addUserDialogValue.password,
       });
       ElMessage({
@@ -170,6 +174,7 @@ const handleAddUser = async (formRef) => {
 
   // 清空
   addUserDialogValue.username = "";
+  addUserDialogValue.name = "";
   addUserDialogValue.password = "";
 };
 
@@ -336,13 +341,14 @@ onMounted(async () => {
     width="40%"
     v-model="addUserDialogValue.visible"
     :close-on-click-modal="false"
-    @submit="handleAddUser"
+    destroy-on-close
     title="添加用户"
   >
     <el-form
       :rules="rules"
       :model="addUserDialogValue"
       @submit.enter.prevent
+      @keydown.native.enter="handleAddUser(addUserForm)"
       label-position="right"
       label-width="100px"
       ref="addUserForm"
@@ -355,6 +361,16 @@ onMounted(async () => {
         <el-input
           v-model="addUserDialogValue.username"
           placeholder="Please input username"
+        />
+      </el-form-item>
+      <el-form-item
+        prop="name"
+        label="姓名"
+        required
+      >
+        <el-input
+          v-model="addUserDialogValue.name"
+          placeholder="Please input name"
         />
       </el-form-item>
       <el-form-item

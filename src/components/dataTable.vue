@@ -20,6 +20,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  rowKey: {
+    type: String,
+    default: "id",
+  },
 });
 
 const emits = defineEmits(["on-edit", "on-delete", "on-selection-change"]);
@@ -41,7 +45,7 @@ const onDelete = (index, row) => {
   <el-table
     border
     stripe
-    row-key="id"
+    :row-key="props.rowKey"
     :data="props.data"
     @selection-change="onSelectionChange"
   >

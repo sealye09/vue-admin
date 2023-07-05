@@ -222,6 +222,7 @@ onMounted(async () => {
     width="40%"
     v-model="addDialogValue.visible"
     :close-on-click-modal="false"
+    destroy-on-close
     title="Add a role"
   >
     <el-form
@@ -229,7 +230,7 @@ onMounted(async () => {
       :model="addDialogValue"
       label-position="right"
       label-width="100px"
-      @submit.enter.prevent
+      @submit="handleAddRole(addRoleForm)"
       ref="addRoleForm"
     >
       <el-form-item
@@ -257,6 +258,7 @@ onMounted(async () => {
   <el-dialog
     width="40%"
     v-model="editDialogValue.visible"
+    destroy-on-close
     :close-on-click-modal="false"
     title="Edit"
   >
@@ -330,7 +332,7 @@ onMounted(async () => {
       <el-button
         class="my-2"
         type="danger"
-        @click="() => handleDeleteManyRoles()"
+        @click="handleDeleteManyRoles"
       >
         批量删除
       </el-button>
