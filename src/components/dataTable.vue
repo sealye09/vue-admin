@@ -16,6 +16,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  tree: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emits = defineEmits(["on-edit", "on-delete", "on-selection-change"]);
@@ -35,9 +39,10 @@ const onDelete = (index, row) => {
 
 <template>
   <el-table
-    :data="props.data"
     border
     stripe
+    row-key="id"
+    :data="props.data"
     @selection-change="onSelectionChange"
   >
     <el-table-column
