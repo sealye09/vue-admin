@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed, onMounted, ref, watch } from "vue";
+import { reactive, computed, onMounted, ref, watch, nextTick } from "vue";
 import { toString } from "lodash";
 import {
   getUsers,
@@ -10,7 +10,6 @@ import {
   getUserRoles,
   assignRole,
 } from "@/api/acl/user.js";
-import { getRoles } from "@/api/acl/role.js";
 import dataTable from "@/components/dataTable.vue";
 
 // ref reactive
@@ -172,10 +171,13 @@ const handleAddUser = async (formRef) => {
     }
   });
 
-  // 清空
-  addUserDialogValue.username = "";
-  addUserDialogValue.name = "";
-  addUserDialogValue.password = "";
+  nextTick(() => {
+    // 清空
+    addUserDialogValue.username = "";
+    addUserDialogValue.name = "";
+    addUserDialogValue.password = "";
+    addUserDialogValue.visible = false;
+  });
 };
 
 // 点击Edit按钮事件
@@ -358,32 +360,38 @@ onMounted(async () => {
         label="用户名"
         required
       >
-        <el-input
-          v-model="addUserDialogValue.username"
-          placeholder="Please input username"
-        />
+        <div class="w-4/5">
+          <el-input
+            v-model="addUserDialogValue.username"
+            placeholder="Please input username"
+          />
+        </div>
       </el-form-item>
       <el-form-item
         prop="name"
         label="姓名"
         required
       >
-        <el-input
-          v-model="addUserDialogValue.name"
-          placeholder="Please input name"
-        />
+        <div class="w-4/5">
+          <el-input
+            v-model="addUserDialogValue.name"
+            placeholder="Please input name"
+          />
+        </div>
       </el-form-item>
       <el-form-item
         prop="password"
         label="密码"
         required
       >
-        <el-input
-          v-model="addUserDialogValue.password"
-          type="password"
-          placeholder="Please input password"
-          show-password
-        />
+        <div class="w-4/5">
+          <el-input
+            v-model="addUserDialogValue.password"
+            type="password"
+            placeholder="Please input password"
+            show-password
+          />
+        </div>
       </el-form-item>
       <el-form-item class="">
         <span class="dialog-footer">

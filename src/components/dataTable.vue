@@ -53,17 +53,30 @@ const onDelete = (index, row) => {
       v-if="props.isSlectable"
       type="selection"
     ></el-table-column>
+    <template v-for="(column, index) in props.columns">
+      <el-table-column
+        v-if="column.isImg"
+        :label="column.label"
+      >
+        <template #default="scope">
+          <el-image
+            :src="scope.row[column.prop]"
+            style="width: 100px; height: 100px"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-else
+        :sortable="column.sortable"
+        :prop="column.prop"
+        :label="column.label"
+        :width="column.width"
+      >
+      </el-table-column>
+    </template>
 
     <el-table-column
-      v-for="(column, index) in props.columns"
-      :sortable="column.sortable"
-      :prop="column.prop"
-      :label="column.label"
-      :width="column.width"
-    />
-
-    <el-table-column
-      label="Operations"
+      label="操作"
       width="200"
     >
       <template #default="scope">
@@ -92,6 +105,7 @@ const onDelete = (index, row) => {
         </el-popconfirm>
       </template>
     </el-table-column>
+
     <template #empty>
       <el-row
         v-if="props.isLoading"

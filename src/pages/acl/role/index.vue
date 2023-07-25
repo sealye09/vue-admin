@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed, onMounted, ref, watch } from "vue";
+import { reactive, computed, onMounted, ref, watch, nextTick } from "vue";
 import { toString } from "lodash";
 import {
   getRoles,
@@ -124,9 +124,11 @@ const handleAddRole = async (formRef) => {
       console.log("error submit!", res);
     }
   });
-
-  // 清空
-  addDialogValue.roleName = "";
+  await nextTick(() => {
+    // 清空
+    addDialogValue.roleName = "";
+    formRef.clearValidate();
+  });
 };
 
 const openEditDialog = (idx, data) => {
@@ -230,7 +232,8 @@ onMounted(async () => {
       :model="addDialogValue"
       label-position="right"
       label-width="100px"
-      @submit="handleAddRole(addRoleForm)"
+      @keydown.enter.native="handleAddRole(addRoleForm)"
+      @submit.enter.prevent
       ref="addRoleForm"
     >
       <el-form-item
@@ -238,7 +241,7 @@ onMounted(async () => {
         label="Role Name"
         required
       >
-        <el-input v-model="addDialogValue.roleName" />
+        <div class="w-4/5"><el-input v-model="addDialogValue.roleName" /></div>
       </el-form-item>
 
       <el-form-item class="">
@@ -275,7 +278,7 @@ onMounted(async () => {
         label="Role Name"
         required
       >
-        <el-input v-model="editDialogValue.roleName" />
+        <div class="w-4/5"><el-input v-model="editDialogValue.roleName" /></div>
       </el-form-item>
 
       <el-form-item class="">
