@@ -1,8 +1,7 @@
 # Vue admin template
 
-## Tech Stack
+商城后台管理系统
 
-- Vue3
-- Element plus
-- axios
-- sass
+## 技术栈
+
+Vue3、Element Plus、axios、sass、pinia
