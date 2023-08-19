@@ -93,7 +93,7 @@ const handleCancel = () => {
     width="40%"
     v-model="visible"
     :close-on-click-modal="false"
-    destroy-on-close
+    :before-close="handleCancel"
     title="添加用户"
   >
     <el-form

@@ -1,14 +1,11 @@
 <script setup>
-import { reactive, computed, onMounted, ref, watch, nextTick } from "vue";
+import { reactive, computed, onMounted, ref, watch, provide } from "vue";
 import { toString } from "lodash";
-import {
-  getRoles,
-  addRole,
-  deleteRoleById,
-  updateRoleById,
-  deleteRolesByIds,
-} from "@/api/acl/role.js";
+import { getRoles, deleteRoleById, deleteRolesByIds } from "@/api/acl/role.js";
 import dataTable from "@/components/dataTable.vue";
+
+import addDialog from "./addDialog.vue";
+import editDialog from "./editDialog.vue";
 
 // ref reactive
 const tableData = reactive({
@@ -45,16 +42,26 @@ const tableData = reactive({
   ],
 });
 
-const addDialogValue = reactive({
-  roleName: "",
-  visible: false,
-});
+const addDialogVisible = ref(false);
+const onAddDialogClose = () => {
+  addDialogVisible.value = false;
+};
+
+provide("addDialogVisible", addDialogVisible);
+provide("onAddDialogClose", onAddDialogClose);
 
 const editDialogValue = reactive({
   id: "",
   roleName: "",
-  visible: false,
 });
+const editDialogVisible = ref(false);
+const onEditDialogClose = () => {
+  editDialogVisible.value = false;
+};
+
+provide("editDialogValue", editDialogValue);
+provide("editDialogVisible", editDialogVisible);
+provide("onEditDialogClose", onEditDialogClose);
 
 const selectedRows = ref([]);
 
@@ -62,9 +69,6 @@ const filters = reactive({
   roleName: "",
   id: "",
 });
-
-const editRoleForm = ref();
-const addRoleForm = ref();
 
 // computed
 const filteredRoles = computed(() => {
@@ -80,13 +84,8 @@ watch(
   () => [tableData.currentPage, tableData.pageSize],
   async (newVal, oldVal) => {
     fetchData();
-  },
+  }
 );
-
-// variables
-const rules = {
-  roleName: [{ required: true, message: "角色名不能为空", trigger: "blur" }],
-};
 
 // functions
 const fetchData = async () => {
@@ -104,61 +103,10 @@ const clearFilters = () => {
 };
 
 // events handlers
-const handleAddRole = async (formRef) => {
-  if (!formRef) return;
-  await formRef.validate(async (valid, fields) => {
-    if (valid) {
-      console.log("submit!");
-      const res = await addRole(addDialogValue.roleName);
-      ElMessage({
-        type: "success",
-        message: "添加成功",
-      });
-      fetchData();
-      addDialogValue.visible = false;
-    } else {
-      ElMessage({
-        type: "error",
-        message: "添加失败",
-      });
-      console.log("error submit!", res);
-    }
-  });
-  await nextTick(() => {
-    // 清空
-    addDialogValue.roleName = "";
-    formRef.clearValidate();
-  });
-};
-
 const openEditDialog = (idx, data) => {
-  editDialogValue.visible = true;
+  editDialogVisible.value = true;
   editDialogValue.roleName = data.roleName;
   editDialogValue.id = data.id;
-  editRoleForm.value = data;
-};
-
-const handleEditRole = async (formRef) => {
-  console.log("get edit data:", editDialogValue);
-  if (!formRef) return;
-  await formRef.validate(async (valid, fields) => {
-    if (valid) {
-      console.log("submit!");
-      await updateRoleById(editDialogValue.id, editDialogValue.roleName);
-      ElMessage({
-        type: "success",
-        message: "修改成功",
-      });
-      fetchData();
-      editDialogValue.visible = false;
-    } else {
-      ElMessage({
-        type: "error",
-        message: "修改失败",
-      });
-      console.log("error submit!", res);
-    }
-  });
 };
 
 const handleDeleteRole = async (idx, data) => {
@@ -220,80 +168,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-dialog
-    width="40%"
-    v-model="addDialogValue.visible"
-    :close-on-click-modal="false"
-    destroy-on-close
-    title="Add a role"
-  >
-    <el-form
-      :rules="rules"
-      :model="addDialogValue"
-      label-position="right"
-      label-width="100px"
-      @keydown.enter.native="handleAddRole(addRoleForm)"
-      @submit.enter.prevent
-      ref="addRoleForm"
-    >
-      <el-form-item
-        prop="roleName"
-        label="Role Name"
-        required
-      >
-        <div class="w-4/5"><el-input v-model="addDialogValue.roleName" /></div>
-      </el-form-item>
+  <add-dialog @on-submit="fetchData" />
 
-      <el-form-item class="">
-        <span class="dialog-footer">
-          <el-button @click="addDialogValue.visible = false">Cancel</el-button>
-          <el-button
-            type="primary"
-            @click="handleAddRole(addRoleForm)"
-          >
-            Add
-          </el-button>
-        </span>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
-
-  <el-dialog
-    width="40%"
-    v-model="editDialogValue.visible"
-    destroy-on-close
-    :close-on-click-modal="false"
-    title="Edit"
-  >
-    <el-form
-      :rules="rules"
-      :model="editDialogValue"
-      label-position="right"
-      label-width="100px"
-      @submit.enter.prevent
-      ref="editRoleForm"
-    >
-      <el-form-item
-        prop="roleName"
-        label="Role Name"
-        required
-      >
-        <div class="w-4/5"><el-input v-model="editDialogValue.roleName" /></div>
-      </el-form-item>
-
-      <el-form-item class="">
-        <span class="dialog-footer">
-          <el-button @click="editDialogValue.visible = false">Cancel</el-button>
-          <el-button
-            type="primary"
-            @click="handleEditRole(editRoleForm)"
-          >
-            Save
-          </el-button>
-        </span>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+  <edit-dialog @on-submit="fetchData" />
 
   <div class="pb-6 flex flex-col gap-4">
     <div class="flex">
@@ -328,9 +205,9 @@ onMounted(async () => {
       <el-button
         class="my-2"
         type="primary"
-        @click="() => (addDialogValue.visible = true)"
+        @click="() => (addDialogVisible = true)"
       >
-        添加用户
+        添加角色
       </el-button>
       <el-button
         class="my-2"
@@ -350,8 +227,8 @@ onMounted(async () => {
     @on-edit="openEditDialog"
     @on-delete="handleDeleteRole"
     @on-selection-change="handleSelectionChange"
-  >
-  </data-table>
+  />
+
   <el-pagination
     class="mt-6 mb-4 w-full"
     background
