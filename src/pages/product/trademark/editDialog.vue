@@ -1,29 +1,18 @@
 <script setup>
-import { ref, reactive, inject } from "vue";
+import { ref, inject } from "vue";
 import { Icon } from "@iconify/vue";
 
-import { addTrademark } from "@/api/product/trademark.js";
+import { updateTrademark } from "@/api/product/trademark";
 
-const visible = inject("addDialogVisible");
-const onClose = inject("onAddDialogClose");
+const editRoleForm = ref();
+
+const visible = inject("editDialogVisible");
+const onClose = inject("onEditDialogClose");
+const editDialogValue = inject("editDialogValue");
+
 const emits = defineEmits(["on-submit"]);
 
-const addDialogValue = reactive({
-  tmName: "",
-  logoUrl: "",
-  fileList: [],
-  preview: false,
-  previewUrl: "",
-});
 const formRef = ref(null);
-
-const defaultForm = {
-  tmName: "",
-  logoUrl: "",
-  fileList: [],
-  preview: false,
-  previewUrl: "",
-};
 
 const rules = {
   name: [
@@ -35,37 +24,31 @@ const rules = {
 const handleSubmit = (formRef) => {
   formRef.validate(async (valid) => {
     if (valid) {
-      const res = await addTrademark(addDialogValue);
-      console.log("🚀 ~ file: addDialog.vue:31 ~ formRef.validate ~ res:", res);
+      const res = await updateTrademark(editDialogValue);
+      console.log("🚀 ~ file: editDialog.vue:26 ~ formRef.validate ~ res:", res);
 
       if (res.code === 200) {
         ElMessage({
-          message: "添加成功",
+          message: "修改成功",
           type: "success",
         });
-        handleClose();
+        onClose();
         formRef.resetFields();
         emits("on-submit");
       } else {
         ElMessage({
-          message: "添加失败",
+          message: "修改失败",
           type: "error",
         });
       }
     } else {
       ElMessage({
-        message: "添加失败,请检查表单",
+        message: "修改失败,请检查表单",
         type: "error",
       });
       return false;
     }
   });
-};
-
-const handleClose = () => {
-  onClose();
-  Object.assign(addDialogValue, defaultForm);
-  formRef.value.resetFields();
 };
 
 //上传图片组件 -> 上传图片之前触发的钩子函数
@@ -94,49 +77,49 @@ const beforeUpload = (rawFile) => {
 const handleUploadSuccess = (response, uploadFile) => {
   //response:即为当前这次上传图片post请求服务器返回的数据
   //收集上传图片的地址,添加一个新的品牌的时候带给服务器
-  addDialogValue.logoUrl = response.data;
-  addDialogValue.fileList = [{ name: response.data, url: response.data }];
+  editDialogValue.logoUrl = response.data;
+  editDialogValue.fileList = [{ name: response.data, url: response.data }];
   //图片上传成功,清除掉对应图片校验结果
   formRef.value.clearValidate("logoUrl");
 };
 
 const handlePreview = (file) => {
-  addDialogValue.previewUrl = file.url;
-  addDialogValue.preview = true;
+  editDialogValue.previewUrl = file.url;
+  editDialogValue.preview = true;
 };
 </script>
 
 <template>
-  <el-dialog v-model="addDialogValue.preview">
+  <el-dialog v-model="editDialogValue.preview">
     <img
       w-full
-      :src="addDialogValue.previewUrl"
+      :src="editDialogValue.previewUrl"
       alt="预览"
     />
   </el-dialog>
 
   <el-dialog
     width="40%"
-    title="添加品牌"
+    title="修改品牌信息"
     v-model="visible"
     :close-on-click-modal="false"
-    @close="handleClose"
+    @close="onClose"
   >
     <el-form
       :rules="rules"
-      :model="addDialogValue"
+      :model="editDialogValue"
       label-position="right"
       label-width="100px"
-      @keydown.enter.native="handleSubmit(formRef)"
+      @keydown.enter.native="handleSubmit(editRoleForm)"
       @submit.enter.prevent
-      ref="formRef"
+      ref="editRoleForm"
     >
       <el-form-item
         prop="tmName"
         label="品牌名称"
         required
       >
-        <div class="w-4/5"><el-input v-model="addDialogValue.tmName" /></div>
+        <div class="w-4/5"><el-input v-model="editDialogValue.tmName" /></div>
       </el-form-item>
 
       <el-form-item
@@ -147,7 +130,7 @@ const handlePreview = (file) => {
         <el-upload
           action="/api/admin/product/fileUpload"
           list-type="picture-card"
-          :file-list="addDialogValue.fileList"
+          :file-list="editDialogValue.fileList"
           :on-preview="handlePreview"
           :before-upload="beforeUpload"
           :on-success="handleUploadSuccess"
@@ -158,12 +141,12 @@ const handlePreview = (file) => {
 
       <el-form-item>
         <span class="dialog-footer">
-          <el-button @click="handleClose">取消</el-button>
+          <el-button @click="onClose">取消</el-button>
           <el-button
             type="primary"
-            @click="handleSubmit(formRef)"
+            @click="handleSubmit(editRoleForm)"
           >
-            添加
+            修改
           </el-button>
         </span>
       </el-form-item>

@@ -18,7 +18,7 @@ export async function getTrademarks(page = 1, limit = 10) {
  */
 export async function getTrademarksByKeyword(keyword) {
   const res = await request.get(
-    `/admin/product/baseTrademark/findBaseTrademarkByKeyword/${keyword} `,
+    `/admin/product/baseTrademark/findBaseTrademarkByKeyword/${keyword} `
   );
   return res;
 }
@@ -36,6 +36,7 @@ export async function updateTrademark(data) {
 /**
  * 新增品牌
  * @param {*} data
+ * data: {tmName: "string", logoUrl: "string"}
  * @returns
  */
 export async function addTrademark(data) {

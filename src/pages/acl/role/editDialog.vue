@@ -53,7 +53,6 @@ const handleClose = () => {
     width="40%"
     v-model="visible"
     destroy-on-close
-    :close-on-click-modal="false"
     title="Edit"
   >
     <el-form

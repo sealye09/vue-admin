@@ -92,7 +92,6 @@ const handleCancel = () => {
   <el-dialog
     width="40%"
     v-model="visible"
-    :close-on-click-modal="false"
     :before-close="handleCancel"
     title="添加用户"
   >

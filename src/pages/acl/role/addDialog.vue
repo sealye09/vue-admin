@@ -68,7 +68,6 @@ const handleClose = () => {
   <el-dialog
     width="40%"
     v-model="visible"
-    :close-on-click-modal="false"
     :before-close="handleClose"
     title="Add a role"
   >

@@ -1,8 +1,11 @@
 <script setup>
-import { ref, onMounted, reactive } from "vue";
-import { getTrademarks } from "@/api/product/trademark.js";
+import { ref, computed, watch, onMounted, reactive, provide } from "vue";
+import { toString } from "lodash";
+
+import { getTrademarks, removeTrademark } from "@/api/product/trademark.js";
 import dataTable from "@/components/dataTable.vue";
 import addDialog from "./addDialog.vue";
+import editDialog from "./editDialog.vue";
 
 const tableData = reactive({
   data: [],
@@ -20,7 +23,7 @@ const tableData = reactive({
       width: 80,
     },
     {
-      label: "商标名称",
+      label: "品牌名称",
       prop: "tmName",
     },
     {
@@ -39,32 +42,85 @@ const tableData = reactive({
   ],
 });
 
-const addDialogValue = reactive({
-  title: "添加品牌",
-  roleName: "",
-  visible: false,
-});
+const addDialogVisible = ref(false);
+const onAddDialogClose = () => {
+  addDialogVisible.value = false;
+};
 
+provide("addDialogVisible", addDialogVisible);
+provide("onAddDialogClose", onAddDialogClose);
+
+const editDialogVisible = ref(false);
+const onEditDialogClose = () => {
+  editDialogVisible.value = false;
+};
 const editDialogValue = reactive({
-  id: "",
-  roleName: "",
-  visible: false,
+  tmName: "",
+  logoUrl: "",
+  fileList: [],
+  preview: false,
+  previewUrl: "",
 });
 
-const editRoleForm = ref();
+provide("editDialogVisible", editDialogVisible);
+provide("onEditDialogClose", onEditDialogClose);
+provide("editDialogValue", editDialogValue);
 
 const filters = reactive({
-  roleName: "",
+  tmName: "",
   id: "",
 });
+
+const filteredData = computed(() => {
+  return tableData.data.filter((item) => {
+    return toString(item.tmName).includes(filters.tmName) && toString(item.id).includes(filters.id);
+  });
+});
+
+const clearFilters = () => {
+  filters.id = "";
+  filters.tmName = "";
+};
 
 const fetchData = async () => {
   tableData.isLoading = true;
-  const res = await getTrademarks();
+  const res = await getTrademarks(tableData.currentPage, tableData.pageSize);
   console.log(res);
   tableData.data = res.data.records;
   tableData.isLoading = false;
 };
+
+const handleEditClick = (row, data) => {
+  editDialogValue.tmName = data.tmName;
+  editDialogValue.logoUrl = data.logoUrl;
+  editDialogValue.fileList = [{ name: data.logoUrl, url: data.logoUrl }];
+  editDialogVisible.value = true;
+};
+
+const handleDelete = async (row, data) => {
+  console.log("delete", row, data);
+  const res = await removeTrademark(data.id);
+  if (res.code === 200) {
+    ElMessage({
+      message: "删除成功",
+      type: "success",
+    });
+    fetchData();
+  } else {
+    ElMessage({
+      message: res.data,
+      type: "error",
+    });
+  }
+};
+
+// watch
+watch(
+  () => [tableData.currentPage, tableData.pageSize],
+  async (newVal, oldVal) => {
+    fetchData();
+  }
+);
 
 onMounted(() => {
   fetchData();
@@ -72,58 +128,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <add-dialog
-    :visible="addDialog.visible"
-    :on-cancel="() => (addDialog.visible = false)"
-    :on-submit="() => (addDialog.visible = false)"
-    :title="addDialog.title"
-  ></add-dialog>
+  <add-dialog @on-submit="fetchData" />
 
-  <el-dialog
-    width="40%"
-    v-model="editDialogValue.visible"
-    destroy-on-close
-    :close-on-click-modal="false"
-    title="Edit"
-  >
-    <el-form
-      :rules="rules"
-      :model="editDialogValue"
-      label-position="right"
-      label-width="100px"
-      @submit.enter.prevent
-      ref="editRoleForm"
-    >
-      <el-form-item
-        prop="roleName"
-        label="Role Name"
-        required
-      >
-        <div class="w-4/5"><el-input v-model="editDialogValue.roleName" /></div>
-      </el-form-item>
-
-      <el-form-item class="">
-        <span class="dialog-footer">
-          <el-button @click="editDialogValue.visible = false">Cancel</el-button>
-          <el-button
-            type="primary"
-            @click="handleEditRole(editRoleForm)"
-          >
-            Save
-          </el-button>
-        </span>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+  <edit-dialog @on-submit="fetchData" />
 
   <div class="pb-6 flex flex-col gap-4">
     <div class="flex">
       <div class="block w-72 mr-8">
         <el-input
           type="text"
-          v-model="filters.roleName"
+          v-model="filters.tmName"
           class="my-2"
-          placeholder="search user by role name"
+          placeholder="search by name"
           clearable
         />
       </div>
@@ -132,7 +148,7 @@ onMounted(() => {
           type="text"
           v-model="filters.id"
           class="my-2"
-          placeholder="search user by id"
+          placeholder="search by id"
           clearable
         />
       </div>
@@ -149,34 +165,29 @@ onMounted(() => {
       <el-button
         class="my-2"
         type="primary"
-        @click="() => (addDialogValue.visible = true)"
+        @click="() => (addDialogVisible = true)"
       >
         添加品牌
       </el-button>
-      <el-button
-        class="my-2"
-        type="danger"
-        @click="() => console.log('delete')"
-      >
-        批量删除
-      </el-button>
     </div>
   </div>
+
   <data-table
-    :data="tableData.data"
+    :data="filteredData"
     :columns="tableData.columns"
     :is-loading="tableData.isLoading"
     :is-slectable="tableData.isSlectable"
-    @on-edit="() => console.log('edit')"
-    @on-delete="() => console.log('delete')"
+    @on-edit="handleEditClick"
+    @on-delete="handleDelete"
     @on-selection-change="() => console.log('selection change')"
-  >
-  </data-table>
+  />
+
   <el-pagination
     class="mt-6 mb-4 w-full"
     background
     v-model:current-page="tableData.currentPage"
     v-model:page-size="tableData.pageSize"
+    :is-slectable="tableData.isSlectable"
     :page-sizes="tableData.pageSizes"
     :layout="tableData.layout"
     :total="tableData.total"
