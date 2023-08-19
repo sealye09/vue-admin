@@ -2,10 +2,11 @@
 import { reactive, computed, onMounted, ref, watch, provide } from "vue";
 import { toString } from "lodash";
 import { getRoles, deleteRoleById, deleteRolesByIds } from "@/api/acl/role.js";
+import { getPermissions, getPermissionById } from "@/api/acl/menu.js";
 import dataTable from "@/components/dataTable.vue";
 
 import addDialog from "./addDialog.vue";
-import editDialog from "./editDialog.vue";
+import editDrawer from "./editDrawer.vue";
 
 // ref reactive
 const tableData = reactive({
@@ -50,18 +51,21 @@ const onAddDialogClose = () => {
 provide("addDialogVisible", addDialogVisible);
 provide("onAddDialogClose", onAddDialogClose);
 
-const editDialogValue = reactive({
+const editDrawerValue = reactive({
+  mode: "info",
   id: "",
   roleName: "",
+  permissions: [],
+  selectedPermissions: [],
 });
-const editDialogVisible = ref(false);
-const onEditDialogClose = () => {
-  editDialogVisible.value = false;
+const editDrawerVisible = ref(false);
+const onEditDrawerClose = () => {
+  editDrawerVisible.value = false;
 };
 
-provide("editDialogValue", editDialogValue);
-provide("editDialogVisible", editDialogVisible);
-provide("onEditDialogClose", onEditDialogClose);
+provide("editDrawerValue", editDrawerValue);
+provide("editDrawerVisible", editDrawerVisible);
+provide("onEditDrawerClose", onEditDrawerClose);
 
 const selectedRows = ref([]);
 
@@ -102,11 +106,30 @@ const clearFilters = () => {
   filters.id = "";
 };
 
+const filterSelectArr = (allData, initArr) => {
+  allData.forEach((item) => {
+    if (item.select && item.level == 4) {
+      initArr.push(item.id);
+    }
+    if (item.children && item.children.length > 0) {
+      filterSelectArr(item.children, initArr);
+    }
+  });
+
+  return initArr;
+};
+
 // events handlers
-const openEditDialog = (idx, data) => {
-  editDialogVisible.value = true;
-  editDialogValue.roleName = data.roleName;
-  editDialogValue.id = data.id;
+const openEditDrawer = async (idx, data) => {
+  console.log("get edit data:", idx, data);
+  editDrawerVisible.value = true;
+  editDrawerValue.roleName = data.roleName;
+  editDrawerValue.id = data.id;
+
+  const res = await getPermissions();
+  editDrawerValue.permissions = res.data;
+  const res2 = await getPermissionById(editDrawerValue.id);
+  editDrawerValue.selectedPermissions = filterSelectArr(res2.data, []);
 };
 
 const handleDeleteRole = async (idx, data) => {
@@ -170,7 +193,7 @@ onMounted(async () => {
 <template>
   <add-dialog @on-submit="fetchData" />
 
-  <edit-dialog @on-submit="fetchData" />
+  <edit-drawer @on-submit="fetchData" />
 
   <div class="pb-6 flex flex-col gap-4">
     <div class="flex">
@@ -224,7 +247,7 @@ onMounted(async () => {
     :columns="tableData.columns"
     :is-loading="tableData.isLoading"
     :is-slectable="tableData.isSlectable"
-    @on-edit="openEditDialog"
+    @on-edit="openEditDrawer"
     @on-delete="handleDeleteRole"
     @on-selection-change="handleSelectionChange"
   />

@@ -46,6 +46,7 @@ const onDelete = (index, row) => {
     border
     stripe
     :row-key="props.rowKey"
+    :expand-row-keys="[1]"
     :data="props.data"
     @selection-change="onSelectionChange"
   >

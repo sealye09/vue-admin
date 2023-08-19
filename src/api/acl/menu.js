@@ -15,7 +15,7 @@ export async function getPermissions() {
  * @returns {object}
  */
 export async function getPermissionById(roleId) {
-  const res = await request.get(`/admin/acl/permission/${roleId}`);
+  const res = await request.get(`/admin/acl/permission/toAssign/${roleId}`);
   return res;
 }
 
@@ -47,8 +47,11 @@ export async function removePermissionById(id) {
 
 /**
  * 添加权限
- * @todo 未完成
  * @param {*} data
+ * @param {string} data.name
+ * @param {string} data.pid
+ * @param {number} data.code
+ * @param {number} data.level
  * @returns {object}
  */
 export async function addPermission(data) {
@@ -57,7 +60,7 @@ export async function addPermission(data) {
 }
 
 /**
- * @todo 未完成
+ * 更新权限
  * @param {*} data
  * @returns {object}
  */

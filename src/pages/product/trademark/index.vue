@@ -87,6 +87,7 @@ const fetchData = async () => {
   const res = await getTrademarks(tableData.currentPage, tableData.pageSize);
   console.log(res);
   tableData.data = res.data.records;
+  tableData.total = res.data.total;
   tableData.isLoading = false;
 };
 
