@@ -1,22 +1,13 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
-import {
-  getCat1,
-  getCat2,
-  getCat3,
-  getAttr,
-  addOrUpdateAttr,
-  removeAttr,
-} from "@/api/product/attr.js";
+import { reactive, ref } from "vue";
+import { getAttr, addOrUpdateAttr, removeAttr } from "@/api/product/attr.js";
+import catSelector from "@/components/catSelector.vue";
 
 const selectState = reactive({
-  cat1List: [],
-  cat1Selected: "",
-  cat2List: [],
-  cat2Selected: "",
-  cat3List: [],
-  cat3Selected: "",
-  attrList: [],
+  cat1: { id: "", name: "" },
+  cat2: { id: "", name: "" },
+  cat3: { id: "", name: "" },
+  complete: false,
 });
 
 const tableData = reactive({
@@ -51,7 +42,7 @@ const toggleEdit = (idx, data) => {
 
 const onDeleteAttrValue = (idx, data) => {
   console.log("🚀 ~ file: index.vue:32 ~ onDelete ~ idx, data:", idx, data);
-  tableData.data.splice(idx, 1);
+  tableEditData.attrList.splice(idx, 1);
 };
 
 const onDeleteAttr = async (idx, data) => {
@@ -92,25 +83,23 @@ const onAddAttrValue = () => {
 
 const onAddAttr = () => {
   // 选择三级分类后，才能添加属性
-  if (!selectState.cat3Selected) {
+  if (selectState.complete) {
+    isEditing.value = true;
+    tableEditData.attrName = "";
+    tableEditData.attrList = [
+      {
+        id: "",
+        attrId: "",
+        valueName: "",
+        show: false,
+      },
+    ];
+  } else {
     ElMessage({
       message: "请先选择分类",
       type: "error",
     });
-    return;
   }
-
-  isEditing.value = true;
-
-  tableEditData.attrName = "";
-  tableEditData.attrList = [
-    {
-      id: "",
-      attrId: "",
-      valueName: "",
-      show: false,
-    },
-  ];
 };
 
 const onInputBlur = (idx, data) => {
@@ -131,7 +120,7 @@ const handleAddAttr = async () => {
   const res = await addOrUpdateAttr({
     attrName: tableEditData.attrName,
     attrValueList: tableEditData.attrList,
-    categoryId: selectState.cat3Selected,
+    categoryId: selectState.cat3.id,
     categoryLevel: 3,
   });
   if (res.code === 200) {
@@ -150,106 +139,23 @@ const handleAddAttr = async () => {
   getAttrList();
 };
 
-const getAttrList = async () => {
-  const res = await getAttr(
-    selectState.cat1Selected,
-    selectState.cat2Selected,
-    selectState.cat3Selected
-  );
-  tableData.data = res.data;
+const handleSelectChange = (val) => {
+  console.log("🚀 ~ file: index.vue:80 ~ handleSelectChange ~ val", val);
+  Object.assign(selectState, val);
+  if (selectState.complete) {
+    getAttrList();
+  }
 };
 
-// 一级分类变化时，获取并更新二级分类和三级分类
-watch(
-  () => selectState.cat1Selected,
-  async (newVal) => {
-    if (newVal) {
-      const res = await getCat2(newVal);
-      selectState.cat2List = res.data;
-      selectState.cat2Selected = "";
-      selectState.cat3List = [];
-      selectState.cat3Selected = "";
-      selectState.attrList = [];
-    }
-  }
-);
-
-// 二级分类变化时，获取并更新三级分类
-watch(
-  () => selectState.cat2Selected,
-  async (newVal) => {
-    if (newVal) {
-      const res = await getCat3(newVal);
-      selectState.cat3List = res.data;
-      selectState.cat3Selected = "";
-      selectState.attrList = [];
-    }
-  }
-);
-
-// 三级分类变化时，获取并更新属性列表
-watch(
-  () => selectState.cat3Selected,
-  async (newVal) => {
-    if (newVal) {
-      getAttrList();
-    } else {
-      tableData.data = [];
-    }
-  }
-);
-
-onMounted(async () => {
-  const res = await getCat1();
-  selectState.cat1List = res.data;
-});
+const getAttrList = async () => {
+  const res = await getAttr(selectState.cat1.id, selectState.cat2.id, selectState.cat3.id);
+  tableData.data = res.data;
+};
 </script>
 
 <template>
   <div class="space-y-8 min-h-[70vh]">
-    <div class="w-full flex justify-center gap-12">
-      <el-select
-        v-model="selectState.cat1Selected"
-        placeholder="一级分类"
-        :disabled="isEditing"
-        clearable
-      >
-        <el-option
-          v-for="item in selectState.cat1List"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        />
-      </el-select>
-
-      <el-select
-        v-model="selectState.cat2Selected"
-        placeholder="二级分类"
-        :disabled="isEditing"
-        clearable
-      >
-        <el-option
-          v-for="item in selectState.cat2List"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        />
-      </el-select>
-
-      <el-select
-        v-model="selectState.cat3Selected"
-        placeholder="三级分类"
-        :disabled="isEditing"
-        clearable
-      >
-        <el-option
-          v-for="item in selectState.cat3List"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        />
-      </el-select>
-    </div>
+    <cat-selector @on-change="handleSelectChange" />
 
     <div
       class="flex flex-col gap-4"
