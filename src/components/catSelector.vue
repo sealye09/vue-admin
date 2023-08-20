@@ -66,7 +66,7 @@ const handleCat3Change = (val) => {
     cat1: { ...selectState.cat1 },
     cat2: { ...selectState.cat2 },
     cat3: { ...selectState.cat3 },
-    complete: true,
+    complete: Boolean(val.id),
   });
 };
 
