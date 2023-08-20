@@ -16,7 +16,6 @@ const tableData = reactive({
   isLoading: false,
   pageSizes: [10, 20, 30, 40, 1, 2],
   layout: "prev, pager, next, jumper, ->, sizes, total",
-  isLoading: false,
   isSlectable: true,
   columns: [
     {
