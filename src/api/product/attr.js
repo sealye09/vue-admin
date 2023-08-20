@@ -56,7 +56,7 @@ export async function addOrUpdateAttr(data) {
  * @param {number | string} attrId
  * @returns {object}
  */
-export async function reqRemoveAttr(attrId) {
-  request.delete("/admin/product/deleteAttr/" + attrId);
+export async function removeAttr(attrId) {
+  const res = await request.delete("/admin/product/deleteAttr/" + attrId);
   return res;
 }

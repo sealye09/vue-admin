@@ -25,7 +25,6 @@ export default defineConfig(({ mode }) => {
       Components({
         resolvers: [ElementPlusResolver()],
       }),
-
     ],
     server: {
       proxy: {
