@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive } from "vue";
 import { getCat1, getCat2, getCat3 } from "@/api/product/attr.js";
 
 const props = defineProps({
