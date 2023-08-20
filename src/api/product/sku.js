@@ -6,7 +6,7 @@ import request from "@/utils/request";
  * @param {number} page
  * @param {number} limit
  */
-export async function reqSkuList(page, limit) {
+export async function getSkuList(page = 1, limit = 10) {
   const res = await request.get(`/admin/product/list/${page}/${limit}`);
   return res;
 }
@@ -16,7 +16,7 @@ export async function reqSkuList(page, limit) {
  * @param {number | string} skuId
  * @returns
  */
-export async function reqSaleSku(skuId) {
+export async function getSaleSku(skuId) {
   const res = await request.get(`/admin/product/onSale/${skuId}`);
   return res;
 }
@@ -26,7 +26,7 @@ export async function reqSaleSku(skuId) {
  * @param {number | string} skuId
  * @returns
  */
-export async function reqCancelSale(skuId) {
+export async function cancelSale(skuId) {
   const res = await request.get(`/admin/product/cancelSale/${skuId}`);
   return res;
 }
@@ -36,7 +36,7 @@ export async function reqCancelSale(skuId) {
  * @param {number | string} skuId
  * @returns
  */
-export async function reqSkuInfo(skuId) {
+export async function getSkuInfo(skuId) {
   const res = await request.get(`/admin/product/getSkuInfo${skuId}/`);
   return res;
 }
@@ -46,7 +46,7 @@ export async function reqSkuInfo(skuId) {
  * @param {number | string} skuId
  * @returns
  */
-export async function reqRemoveSku(skuId) {
+export async function removeSku(skuId) {
   const res = await request.delete(`/admin/product/deleteSku/${skuId}`);
   return res;
 }

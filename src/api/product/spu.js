@@ -7,8 +7,8 @@ import request from "@/utils/request";
  * @param {number | string} category3Id
  * @returns
  */
-export async function reqHasSpu(page, limit, category3Id) {
-  const res = request.get(`/admin/product/` + `${page}/${limit}?category3Id${category3Id}`);
+export async function getSpu(page, limit, category3Id) {
+  const res = request.get(`/admin/product/` + `${page}/${limit}?category3Id=${category3Id}`);
   return res;
 }
 
@@ -16,7 +16,7 @@ export async function reqHasSpu(page, limit, category3Id) {
  * 获取全部的SPU的品牌的数据
  * @returns
  */
-export async function reqAllTradeMark() {
+export async function getAllTradeMark() {
   const res = request.get(`/admin/product/baseTrademark/getTrademarkList`);
   return res;
 }
@@ -26,7 +26,7 @@ export async function reqAllTradeMark() {
  * @param {number | string} spuId
  * @returns
  */
-export async function reqSpuImageList(spuId) {
+export async function getSpuImageList(spuId) {
   const res = request.get(`/admin/product/spuImageList/` + spuId);
   return res;
 }
@@ -36,7 +36,7 @@ export async function reqSpuImageList(spuId) {
  * @param {number | string} spuId
  * @returns
  */
-export async function reqSpuHasSaleAttr(spuId) {
+export async function getSpuHasSaleAttr(spuId) {
   const res = request.get(`/admin/product/spuSaleAttrList/` + spuId);
   return res;
 }
@@ -45,7 +45,7 @@ export async function reqSpuHasSaleAttr(spuId) {
  * 获取全部的销售属性
  * @returns
  */
-export async function reqAllSaleAttr() {
+export async function getAllSaleAttr() {
   const res = request.get(`/admin/product/baseSaleAttrList`);
   return res;
 }
@@ -55,7 +55,7 @@ export async function reqAllSaleAttr() {
  * @param {object} data 新增的SPU 或者已有的SPU对象
  * @returns
  */
-export async function reqAddOrUpdateSpu(data) {
+export async function addOrUpdateSpu(data) {
   //如果SPU对象拥有ID,更新已有的SPU
   if (data.id) {
     return request.post(`/admin/product/updateSpuInfo`, data);
@@ -69,7 +69,7 @@ export async function reqAddOrUpdateSpu(data) {
  * @param {object} data
  * @returns
  */
-export async function reqAddSku(data) {
+export async function addSku(data) {
   request.post(`/admin/product/saveSkuInfo`, data);
   return res;
 }
@@ -79,17 +79,17 @@ export async function reqAddSku(data) {
  * @param {number | string} spuId
  * @returns
  */
-export async function reqSkuList(spuId) {
+export async function getSkuList(spuId) {
   const res = request.get(`/admin/product/findBySpuId/` + spuId);
   return res;
 }
 
 /**
  * 删除已有的SPU
- * @param {number | string} spuId 
- * @returns 
+ * @param {number | string} spuId
+ * @returns
  */
-export async function reqRemoveSpu(spuId) {
+export async function removeSpu(spuId) {
   const res = request.delete(`/admin/product/deleteSpu/` + spuId);
   return res;
 }
