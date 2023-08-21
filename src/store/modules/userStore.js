@@ -12,17 +12,18 @@ import {
 } from "@/api/user/user.js";
 
 //用于过滤当前用户需要展示的异步路由
-function filterAsyncRoutes(asnycRoutes, routes) {
-  return asnycRoutes.filter((item) => {
-    if (routes.includes(item.name)) {
-      console.log("name", item.name);
-      if (item.children && item.children.length > 0) {
-        //硅谷333账号:product\trademark\attr\sku
-        item.children = filterAsyncRoutes(item.children, routes);
+function filterAsyncRoutes(allRoutes, names) {
+  const res = [];
+  allRoutes.forEach((route) => {
+    const tmp = { ...route };
+    if (names.includes(tmp.name)) {
+      if (tmp.children) {
+        tmp.children = filterAsyncRoutes(tmp.children, names);
       }
-      return true;
+      res.push(tmp);
     }
   });
+  return res;
 }
 
 const useUserStore = defineStore({
@@ -54,10 +55,11 @@ const useUserStore = defineStore({
           avatar: res.data.avatar,
           roles: res.data.roles,
         };
-        console.log(res.data.routes);
-        console.log(asyncRoutes);
+        console.log("服务端路由：", res.data.routes);
+        console.log("本地全量路由：", asyncRoutes);
         //计算当前用户需要展示的异步路由
         const userRoutes = filterAsyncRoutes(cloneDeep(asyncRoutes), res.data.routes);
+        console.log("过滤后的路由：", userRoutes);
 
         //菜单需要的数据整理完毕
         this.menu = [...basicRoutes, ...userRoutes, anyRoute];
