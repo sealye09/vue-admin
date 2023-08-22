@@ -1,8 +1,12 @@
 <script setup>
-import { ref, reactive, onMounted, watch } from "vue";
-import { getSpu, getSpuHasSaleAttr } from "@/api/product/spu";
-import catSelector from "@/components/catSelector.vue";
+import { ref, reactive, provide, watch } from "vue";
 import { Icon } from "@iconify/vue";
+
+import { getSpu, removeSpu, getSpuHasSaleAttr } from "@/api/product/spu";
+import catSelector from "@/components/catSelector.vue";
+
+import DetailDialog from "./DetailDialog.vue";
+import SpuForm from "./SpuForm.vue";
 
 // ref reactive
 const tableData = reactive({
@@ -40,6 +44,24 @@ const selectState = reactive({
   complete: false,
 });
 
+const formMode = ref("view");
+const spuMode = ref("add");
+
+const detailVisible = ref(false);
+provide("detailVisible", detailVisible);
+const detailId = ref("");
+provide("detailId", detailId);
+
+const editId = ref("");
+
+watch(
+  () => [tableData.currentPage, tableData.pageSize],
+
+  ([currentPage, pageSize]) => {
+    fetchSpu(selectState.cat3.id);
+  }
+);
+
 const handleSelectChange = (val) => {
   console.log("🚀 ~ file: index.vue:16 ~ handleSelectChange ~ val", val);
   Object.assign(selectState, val);
@@ -57,96 +79,155 @@ const fetchSpu = async (catId) => {
   tableData.total = res.data.total;
 };
 
-const onAdd = (index, row) => {
+const onAddSku = (index, row) => {
   console.log("🚀 ~ file: index.vue:52 ~ onAdd ~ index, row", index, row);
 };
 
-const onView = (index, row) => {
-  console.log("🚀 ~ file: index.vue:52 ~ onView ~ index, row", index, row);
+const onAddSpu = () => {
+  spuMode.value = "add";
+  formMode.value = "spu";
 };
 
-const onEdit = (index, row) => {
-  console.log("🚀 ~ file: index.vue:52 ~ onEdit ~ index, row", index, row);
+const onView = (_, row) => {
+  detailId.value = row.id;
+  detailVisible.value = true;
 };
 
-const onDelete = (index, row) => {
-  console.log("🚀 ~ file: index.vue:52 ~ onDelete ~ index, row", index, row);
+const onEdit = (_, row) => {
+  editId.value = row.id;
+  spuMode.value = "edit";
+  formMode.value = "spu";
+};
+
+const onDelete = (_, row) => {
+  removeSpu(row.id).then((res) => {
+    console.log("🚀 ~ file: index.vue:52 ~ onDelete ~ res", res);
+    if (res.code === 200) {
+      ElMessage({
+        type: "success",
+        message: "删除成功",
+      });
+    } else {
+      ElMessage({
+        type: "error",
+        message: res.data ? res.data : "删除失败",
+      });
+    }
+    fetchSpu(selectState.cat3.id);
+  });
 };
 </script>
 
 <template>
+  <detail-dialog />
+
   <div class="space-y-8">
-    <cat-selector @on-change="handleSelectChange" />
-
-    <data-table
-      :data="tableData.data"
-      :columns="tableData.columns"
-      :is-loading="tableData.isLoading"
-      :is-slectable="tableData.isSlectable"
-      :hasOperate="tableData.hasOperate"
-    >
-      <template #operate>
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button
-              type="primary"
-              title="添加SKU"
-              circle
-              @click="onAdd(scope.$index, scope.row)"
-            >
-              <Icon icon="heroicons:plus-solid" />
-            </el-button>
-
-            <el-button
-              type="info"
-              title="查看SKU信息"
-              circle
-              @click="onView(scope.$index, scope.row)"
-            >
-              <Icon icon="heroicons:eye" />
-            </el-button>
-
-            <el-button
-              type="warning"
-              title="编辑SPU"
-              circle
-              @click="onEdit(scope.$index, scope.row)"
-            >
-              <Icon icon="heroicons:pencil-square" />
-            </el-button>
-
-            <el-popconfirm
-              confirm-button-text="确认"
-              cancel-button-text="取消"
-              title="确认删除吗？"
-              @confirm="onDelete(scope.$index, scope.row)"
-            >
-              <template #reference>
-                <el-button
-                  type="danger"
-                  title="删除SPU"
-                  circle
-                >
-                  <Icon icon="heroicons:archive-box-x-mark" />
-                </el-button>
-              </template>
-            </el-popconfirm>
-          </template>
-        </el-table-column>
-      </template>
-    </data-table>
-
-    <el-pagination
-      v-show="selectState.complete"
-      class="mt-6 mb-4 w-full"
-      background
-      v-model:current-page="tableData.currentPage"
-      v-model:page-size="tableData.pageSize"
-      :page-sizes="tableData.pageSizes"
-      :layout="tableData.layout"
-      :total="tableData.total"
-      :disabled="tableData.isLoading"
+    <cat-selector
+      :disabled="formMode !== 'view'"
+      @on-change="handleSelectChange"
     />
+
+    <el-divider></el-divider>
+
+    <spu-form
+      v-if="formMode === 'spu'"
+      :mode="spuMode"
+      :cat3-id="selectState.cat3.id"
+      :spu-id="editId"
+      @on-cancel="
+        () => {
+          formMode = 'view';
+        }
+      "
+      @on-submit="
+        (val) => {
+          if (val) {
+            formMode = 'view';
+            fetchSpu(selectState.cat3.id);
+          }
+        }
+      "
+    />
+
+    <div
+      v-if="formMode === 'view'"
+      class="space-y-6"
+    >
+      <el-button
+        type="primary"
+        @click="onAddSpu"
+      >
+        添加SPU
+      </el-button>
+      <data-table
+        :data="tableData.data"
+        :columns="tableData.columns"
+        :is-loading="tableData.isLoading"
+        :is-slectable="tableData.isSlectable"
+        :hasOperate="tableData.hasOperate"
+      >
+        <template #operate>
+          <el-table-column label="操作">
+            <template #default="scope">
+              <el-button
+                type="primary"
+                title="添加SKU"
+                circle
+                @click="onAddSku(scope.$index, scope.row)"
+              >
+                <Icon icon="heroicons:plus-solid" />
+              </el-button>
+
+              <el-button
+                type="info"
+                title="查看SKU信息"
+                circle
+                @click="onView(scope.$index, scope.row)"
+              >
+                <Icon icon="heroicons:eye" />
+              </el-button>
+
+              <el-button
+                type="warning"
+                title="编辑SPU"
+                circle
+                @click="onEdit(scope.$index, scope.row)"
+              >
+                <Icon icon="heroicons:pencil-square" />
+              </el-button>
+
+              <el-popconfirm
+                confirm-button-text="确认"
+                cancel-button-text="取消"
+                title="确认删除吗？"
+                @confirm="onDelete(scope.$index, scope.row)"
+              >
+                <template #reference>
+                  <el-button
+                    type="danger"
+                    title="删除SPU"
+                    circle
+                  >
+                    <Icon icon="heroicons:archive-box-x-mark" />
+                  </el-button>
+                </template>
+              </el-popconfirm>
+            </template>
+          </el-table-column>
+        </template>
+      </data-table>
+      <el-pagination
+        v-show="selectState.complete"
+        class="mt-6 mb-4 w-full"
+        background
+        v-model:current-page="tableData.currentPage"
+        v-model:page-size="tableData.pageSize"
+        :page-sizes="tableData.pageSizes"
+        :layout="tableData.layout"
+        :total="tableData.total"
+        :disabled="tableData.isLoading"
+      />
+    </div>
   </div>
 </template>
 

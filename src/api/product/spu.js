@@ -13,6 +13,16 @@ export async function getSpu(page, limit, category3Id) {
 }
 
 /**
+ * 获取某一个已有的SPU的详细信息
+ * @param {*} spuId
+ * @returns
+ */
+export async function getSpuInfo(spuId) {
+  const res = request.get(`/admin/product/getSpuInfo/` + spuId);
+  return res;
+}
+
+/**
  * 获取全部的SPU的品牌的数据
  * @returns
  */

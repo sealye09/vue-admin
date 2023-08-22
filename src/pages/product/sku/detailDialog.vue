@@ -7,9 +7,7 @@ const detailId = inject("detailId");
 
 // reactive ref
 const skuInfo = reactive({
-  username: "",
-  password: "",
-  name: "",
+  skuImageList: [],
 });
 
 const fetchSkuInfo = async () => {
