@@ -16,7 +16,7 @@ export async function getSkuList(page = 1, limit = 10) {
  * @param {number | string} skuId
  * @returns
  */
-export async function getSaleSku(skuId) {
+export async function onSaleSku(skuId) {
   const res = await request.get(`/admin/product/onSale/${skuId}`);
   return res;
 }
@@ -37,7 +37,7 @@ export async function cancelSale(skuId) {
  * @returns
  */
 export async function getSkuInfo(skuId) {
-  const res = await request.get(`/admin/product/getSkuInfo${skuId}/`);
+  const res = await request.get(`/admin/product/getSkuInfo/${skuId}/`);
   return res;
 }
 

@@ -64,7 +64,7 @@ export const basicRoutes = [
     meta: {
       hidden: false,
       title: "数据大屏",
-      icon: "heroicons:computer-desktop",
+      icon: "heroicons:chart-pie",
     },
     component: () => import("@/pages/screen/index.vue"),
   },

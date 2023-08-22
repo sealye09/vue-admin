@@ -1,4 +1,6 @@
 <script setup>
+import { computed, useSlots } from "vue";
+
 const props = defineProps({
   data: {
     type: Array,
@@ -24,6 +26,17 @@ const props = defineProps({
     type: String,
     default: "id",
   },
+  // 是否有操作列
+  hasOperate: {
+    type: Boolean,
+    default: true,
+  },
+});
+
+const slots = useSlots();
+
+const hasOperateSlot = computed(() => {
+  return Boolean(slots.operate);
 });
 
 const emits = defineEmits(["on-edit", "on-delete", "on-selection-change"]);
@@ -76,7 +89,12 @@ const onDelete = (index, row) => {
       </el-table-column>
     </template>
 
+    <slot name="col"> </slot>
+
+    <slot name="operate"> </slot>
+
     <el-table-column
+      v-if="props.hasOperate && !hasOperateSlot"
       label="操作"
       width="200"
     >

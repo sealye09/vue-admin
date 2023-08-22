@@ -1,7 +1,10 @@
 <script setup>
-import { ref, reactive, onMounted, watch } from "vue";
-import { getSkuInfo, getSaleSku, getSkuList, removeSku, cancelSale } from "@/api/product/sku";
-import { getCat1, getCat2, getCat3, getAttr } from "@/api/product/attr";
+import { ref, reactive, onMounted, watch, provide } from "vue";
+import { Icon } from "@iconify/vue";
+
+import { onSaleSku, getSkuList, removeSku, cancelSale } from "@/api/product/sku";
+
+import detailDialog from "./detailDialog.vue";
 
 // ref reactive
 const tableData = reactive({
@@ -12,7 +15,6 @@ const tableData = reactive({
   isLoading: false,
   pageSizes: [10, 20, 30, 40, 1, 2],
   layout: "prev, pager, next, jumper, ->, sizes, total",
-  isSlectable: true,
   columns: [
     {
       prop: "id",
@@ -55,6 +57,12 @@ const tableData = reactive({
   ],
 });
 
+const detailVisible = ref(false);
+const detailId = ref("");
+provide("detailVisible", detailVisible);
+provide("detailId", detailId);
+
+// 获取sku列表
 const fetchSkuList = async () => {
   tableData.isLoading = true;
   const res = await getSkuList(tableData.currentPage, tableData.pageSize);
@@ -63,7 +71,55 @@ const fetchSkuList = async () => {
   tableData.isLoading = false;
 };
 
-const handleDelete = async (_, data) => {
+// 上架/下架
+const onToggleSaleStatus = async (index, row) => {
+  console.log("🚀 ~ file: index.vue:52 ~ onAdd ~ index, row", index, row);
+  if (row.isSale) {
+    const res = await cancelSale(row.id);
+    console.log("🚀 ~ file: index.vue:71 ~ onToggleSaleStatus ~ res:", res);
+    if (res.code === 200) {
+      ElMessage({
+        type: "success",
+        message: "下架成功",
+      });
+      fetchSkuList();
+    } else {
+      ElMessage({
+        type: "error",
+        message: res.data ? res.data : "下架失败",
+      });
+    }
+  } else {
+    const res = await onSaleSku(row.id);
+    console.log("🚀 ~ file: index.vue:85 ~ onToggleSaleStatus ~ res:", res);
+
+    if (res.code === 200) {
+      ElMessage({
+        type: "success",
+        message: "上架成功",
+      });
+      fetchSkuList();
+    } else {
+      ElMessage({
+        type: "error",
+        message: res.data ? res.data : "上架失败",
+      });
+    }
+  }
+};
+
+// 查看详情
+const onView = (index, row) => {
+  console.log("🚀 ~ file: index.vue:52 ~ onView ~ index, row", index, row);
+  detailId.value = row.id;
+  detailVisible.value = true;
+};
+
+const onEdit = (index, row) => {
+  console.log("🚀 ~ file: index.vue:52 ~ onEdit ~ index, row", index, row);
+};
+
+const onDelete = async (_, data) => {
   const { id } = data;
   const res = await removeSku(id);
   if (res.code === 200) {
@@ -94,13 +150,76 @@ onMounted(async () => {
 </script>
 
 <template>
+  <detail-dialog />
+
   <data-table
     :data="tableData.data"
     :columns="tableData.columns"
     :is-loading="tableData.isLoading"
-    @on-edit="handleEditClick"
-    @on-delete="handleDelete"
-  />
+    :is-slectable="tableData.isSlectable"
+    :hasOperate="tableData.hasOperate"
+  >
+    <template #operate>
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button
+            v-if="scope.row.isSale"
+            type="warning"
+            title="下架"
+            circle
+            @click="onToggleSaleStatus(scope.$index, scope.row)"
+          >
+            <Icon icon="heroicons:arrow-down" />
+          </el-button>
+
+          <el-button
+            v-else
+            type="primary"
+            title="上架"
+            circle
+            @click="onToggleSaleStatus(scope.$index, scope.row)"
+          >
+            <Icon icon="heroicons:arrow-up" />
+          </el-button>
+
+          <el-button
+            type="info"
+            title="查看SKU详情"
+            circle
+            @click="onView(scope.$index, scope.row)"
+          >
+            <Icon icon="heroicons:eye" />
+          </el-button>
+
+          <el-button
+            type="warning"
+            title="编辑SKU信息"
+            circle
+            @click="onEdit(scope.$index, scope.row)"
+          >
+            <Icon icon="heroicons:pencil-square" />
+          </el-button>
+
+          <el-popconfirm
+            confirm-button-text="确认"
+            cancel-button-text="取消"
+            title="确认删除吗？"
+            @confirm="onDelete(scope.$index, scope.row)"
+          >
+            <template #reference>
+              <el-button
+                type="danger"
+                title="删除SKU"
+                circle
+              >
+                <Icon icon="heroicons:archive-box-x-mark" />
+              </el-button>
+            </template>
+          </el-popconfirm>
+        </template>
+      </el-table-column>
+    </template>
+  </data-table>
 
   <el-pagination
     class="mt-6 mb-4 w-full"

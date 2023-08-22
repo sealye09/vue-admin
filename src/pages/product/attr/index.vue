@@ -1,7 +1,9 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { getAttr, addOrUpdateAttr, removeAttr } from "@/api/product/attr.js";
+
 import catSelector from "@/components/catSelector.vue";
+import dataTable from "@/components/dataTable.vue";
 
 const selectState = reactive({
   cat1: { id: "", name: "" },
@@ -12,6 +14,19 @@ const selectState = reactive({
 
 const tableData = reactive({
   data: [],
+  columns: [
+    {
+      prop: "id",
+      label: "ID",
+      sortable: true,
+      width: 120,
+    },
+    {
+      prop: "attrName",
+      label: "属性名称",
+      sortable: true,
+    },
+  ],
 });
 
 const tableEditData = reactive({
@@ -158,8 +173,8 @@ const getAttrList = async () => {
     <cat-selector @on-change="handleSelectChange" />
 
     <div
-      class="flex flex-col gap-4"
       v-if="isEditing"
+      class="flex flex-col gap-4"
     >
       <el-row>
         <div class="flex gap-2">
@@ -252,61 +267,28 @@ const getAttrList = async () => {
           添加属性
         </el-button>
       </div>
-      <el-table
+
+      <data-table
         border
         stripe
         :data="tableData.data"
+        :columns="tableData.columns"
+        @on-edit="toggleEdit"
+        @on-delete="onDeleteAttr"
       >
-        <el-table-column
-          prop="id"
-          label="ID"
-        />
-        <el-table-column
-          prop="attrName"
-          label="属性名称"
-        />
-        <el-table-column label="属性值">
-          <template #="{ row, $index }">
-            <el-tag
-              v-for="(item, index) in row.attrValueList"
-              :key="item.id"
-            >
-              {{ item.valueName }}
-            </el-tag>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="操作"
-          width="200"
-        >
-          <template #default="scope">
-            <el-button
-              title="Edit User"
-              size="small"
-              @click="toggleEdit(scope.$index, scope.row)"
-            >
-              Edit
-            </el-button>
-            <el-popconfirm
-              confirm-button-text="确认"
-              cancel-button-text="取消"
-              title="确认删除吗？"
-              @confirm="onDeleteAttr(scope.$index, scope.row)"
-            >
-              <template #reference>
-                <el-button
-                  title="Delete User"
-                  size="small"
-                  type="danger"
-                >
-                  Delete
-                </el-button>
-              </template>
-            </el-popconfirm>
-          </template>
-        </el-table-column>
-      </el-table>
+        <template #col>
+          <el-table-column label="属性值">
+            <template #default="{ row, index }">
+              <el-tag
+                v-for="(item, index) in row.attrValueList"
+                :key="item.id"
+              >
+                {{ item.valueName }}
+              </el-tag>
+            </template>
+          </el-table-column>
+        </template>
+      </data-table>
     </div>
   </div>
 </template>
