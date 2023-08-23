@@ -133,76 +133,68 @@ onMounted(() => {
 
   <edit-dialog @on-submit="fetchData" />
 
-  <div class="pb-6 flex flex-col gap-4">
-    <div class="flex">
-      <div class="block w-72 mr-8">
-        <el-input
-          type="text"
-          v-model="filters.tmName"
-          class="my-2"
-          placeholder="search by name"
-          clearable
-        />
-      </div>
-      <div class="block w-72 mr-8">
-        <el-input
-          type="text"
-          v-model="filters.id"
-          class="my-2"
-          placeholder="search by id"
-          clearable
-        />
-      </div>
+  <div class="space-y-8">
+    <div class="w-full flex justify-center items-center gap-12">
+      <el-input
+        type="text"
+        v-model="filters.tmName"
+        placeholder="search by name"
+        clearable
+      />
+      <el-input
+        type="text"
+        v-model="filters.id"
+        placeholder="search by id"
+        clearable
+      />
       <el-button
-        @click="clearFilters"
         type="primary"
-        class="my-2"
+        @click="clearFilters"
       >
         Reset Filters
       </el-button>
     </div>
 
-    <div class="flex gap-2">
+    <el-divider />
+
+    <div class="space-y-6">
       <el-button
-        class="my-2"
         type="primary"
         @click="() => (addDialogVisible = true)"
       >
         添加品牌
       </el-button>
+
+      <data-table
+        :data="filteredData"
+        :columns="tableData.columns"
+        :is-loading="tableData.isLoading"
+        :is-slectable="tableData.isSlectable"
+        @on-edit="handleEditClick"
+        @on-delete="handleDelete"
+      />
+
+      <el-pagination
+        background
+        v-model:current-page="tableData.currentPage"
+        v-model:page-size="tableData.pageSize"
+        :is-slectable="tableData.isSlectable"
+        :page-sizes="tableData.pageSizes"
+        :layout="tableData.layout"
+        :total="tableData.total"
+        :disabled="tableData.isLoading"
+        @size-change="
+          (val) => {
+            tableData.currentPage = 1;
+            tableData.pageSize = val;
+          }
+        "
+        @current-change="
+          (val) => {
+            tableData.currentPage = val;
+          }
+        "
+      />
     </div>
   </div>
-
-  <data-table
-    :data="filteredData"
-    :columns="tableData.columns"
-    :is-loading="tableData.isLoading"
-    :is-slectable="tableData.isSlectable"
-    @on-edit="handleEditClick"
-    @on-delete="handleDelete"
-    @on-selection-change="() => console.log('selection change')"
-  />
-
-  <el-pagination
-    class="mt-6 mb-4 w-full"
-    background
-    v-model:current-page="tableData.currentPage"
-    v-model:page-size="tableData.pageSize"
-    :is-slectable="tableData.isSlectable"
-    :page-sizes="tableData.pageSizes"
-    :layout="tableData.layout"
-    :total="tableData.total"
-    :disabled="tableData.isLoading"
-    @size-change="
-      (val) => {
-        tableData.currentPage = 1;
-        console.log(`${val} items per page`);
-      }
-    "
-    @current-change="
-      (val) => {
-        console.log(`current page: ${val}`);
-      }
-    "
-  />
 </template>

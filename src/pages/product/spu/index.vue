@@ -131,7 +131,7 @@ const onDelete = (_, row) => {
 <template>
   <detail-dialog />
 
-  <div class="space-y-8">
+  <div class="space-y-8 min-h-[70vh]">
     <cat-selector
       :disabled="formMode !== 'view'"
       @on-change="handleSelectChange"
@@ -165,6 +165,7 @@ const onDelete = (_, row) => {
       >
         添加SPU
       </el-button>
+
       <data-table
         :data="tableData.data"
         :columns="tableData.columns"
@@ -222,6 +223,7 @@ const onDelete = (_, row) => {
           </el-table-column>
         </template>
       </data-table>
+
       <el-pagination
         v-show="selectState.complete"
         class="mt-6 mb-4 w-full"

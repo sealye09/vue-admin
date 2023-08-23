@@ -172,6 +172,8 @@ const getAttrList = async () => {
   <div class="space-y-8 min-h-[70vh]">
     <cat-selector @on-change="handleSelectChange" />
 
+    <el-divider />
+
     <div
       v-if="isEditing"
       class="flex flex-col gap-4"
@@ -256,7 +258,7 @@ const getAttrList = async () => {
     </div>
 
     <div
-      class="flex flex-col gap-4"
+      class="space-y-6"
       v-else
     >
       <div class="w-full flex">

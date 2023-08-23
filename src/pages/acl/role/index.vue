@@ -195,73 +195,67 @@ onMounted(async () => {
 
   <edit-drawer @on-submit="fetchData" />
 
-  <div class="pb-6 flex flex-col gap-4">
-    <div class="flex">
-      <div class="block w-72 mr-8">
-        <el-input
-          type="text"
-          v-model="filters.roleName"
-          class="my-2"
-          placeholder="search user by role name"
-          clearable
-        />
-      </div>
-      <div class="block w-72 mr-8">
-        <el-input
-          type="text"
-          v-model="filters.id"
-          class="my-2"
-          placeholder="search user by id"
-          clearable
-        />
-      </div>
+  <div class="space-y-8">
+    <div class="w-full flex justify-center items-center gap-12">
+      <el-input
+        type="text"
+        placeholder="search user by role name"
+        v-model="filters.roleName"
+        clearable
+      />
+      <el-input
+        type="text"
+        placeholder="search user by id"
+        v-model="filters.id"
+        clearable
+      />
       <el-button
-        @click="clearFilters"
         type="primary"
-        class="my-2"
+        @click="clearFilters"
       >
         Reset Filters
       </el-button>
     </div>
 
-    <div class="flex gap-2">
-      <el-button
-        class="my-2"
-        type="primary"
-        @click="() => (addDialogVisible = true)"
-      >
-        添加角色
-      </el-button>
-      <el-button
-        class="my-2"
-        type="danger"
-        @click="handleDeleteManyRoles"
-      >
-        批量删除
-      </el-button>
+    <el-divider />
+
+    <div class="space-y-6">
+      <div class="flex gap-2">
+        <el-button
+          type="primary"
+          @click="() => (addDialogVisible = true)"
+        >
+          添加角色
+        </el-button>
+        <el-button
+          type="danger"
+          @click="handleDeleteManyRoles"
+        >
+          批量删除
+        </el-button>
+      </div>
+
+      <data-table
+        :data="filteredRoles"
+        :columns="tableData.columns"
+        :is-loading="tableData.isLoading"
+        :is-slectable="tableData.isSlectable"
+        @on-edit="openEditDrawer"
+        @on-delete="handleDeleteRole"
+        @on-selection-change="handleSelectionChange"
+      />
+
+      <el-pagination
+        background
+        v-model:current-page="tableData.currentPage"
+        v-model:page-size="tableData.pageSize"
+        :page-sizes="tableData.pageSizes"
+        :layout="tableData.layout"
+        :total="tableData.total"
+        :disabled="tableData.isLoading"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
     </div>
   </div>
-
-  <data-table
-    :data="filteredRoles"
-    :columns="tableData.columns"
-    :is-loading="tableData.isLoading"
-    :is-slectable="tableData.isSlectable"
-    @on-edit="openEditDrawer"
-    @on-delete="handleDeleteRole"
-    @on-selection-change="handleSelectionChange"
-  />
-
-  <el-pagination
-    class="mt-6 mb-4 w-full"
-    background
-    v-model:current-page="tableData.currentPage"
-    v-model:page-size="tableData.pageSize"
-    :page-sizes="tableData.pageSizes"
-    :layout="tableData.layout"
-    :total="tableData.total"
-    :disabled="tableData.isLoading"
-    @size-change="handleSizeChange"
-    @current-change="handleCurrentChange"
-  />
 </template>
