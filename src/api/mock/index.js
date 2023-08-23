@@ -3,7 +3,7 @@ export default [
     // 生成模拟的商品数据
     url: "/api/dashboard/products",
     method: "get",
-    timeout: 500,
+    timeout: 200,
     statusCode: 200,
     response: {
       code: 200,
@@ -23,7 +23,7 @@ export default [
     // 生成模拟的销售额数据
     url: "/api/dashboard/sales",
     method: "get",
-    timeout: 500,
+    timeout: 200,
     statusCode: 200,
     response: {
       code: 200,
@@ -39,7 +39,7 @@ export default [
   {
     url: "/api/dashboard/users/age",
     method: "get",
-    timeout: 500,
+    timeout: 200,
     statusCode: 200,
     response: {
       code: 200,
