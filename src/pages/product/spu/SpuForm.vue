@@ -25,7 +25,7 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(["on-cancel", "on-submit"]);
+const emits = defineEmits(["change-scene"]);
 
 const attrInputRef = ref(null);
 
@@ -79,7 +79,7 @@ const handlePreview = (file) => {
 };
 
 const handleCancel = () => {
-  emits("on-cancel", 1);
+  emits("change-scene", "view");
 };
 
 const handleSubmit = async () => {
@@ -98,13 +98,12 @@ const handleSubmit = async () => {
       type: "success",
       message: spuData.id ? "更新成功" : "添加成功",
     });
-    emits("on-submit", 1);
+    emits("change-scene", "view");
   } else {
     ElMessage({
       type: "error",
       message: spuData.id ? "更新失败" : "添加失败",
     });
-    emits("on-submit", 0);
   }
 };
 

@@ -80,7 +80,7 @@ export async function addOrUpdateSpu(data) {
  * @returns
  */
 export async function addSku(data) {
-  request.post(`/admin/product/saveSkuInfo`, data);
+  const res = await request.post(`/admin/product/saveSkuInfo`, data);
   return res;
 }
 

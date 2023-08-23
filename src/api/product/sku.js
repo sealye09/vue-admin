@@ -50,3 +50,13 @@ export async function removeSku(skuId) {
   const res = await request.delete(`/admin/product/deleteSku/${skuId}`);
   return res;
 }
+
+/**
+ * 搜索SKU的接口
+ * @param {string} keyword
+ * @returns
+ */
+export async function searchSku(keyword) {
+  const res = await request.get(`/admin/product/inner/findSkuInfoByKeyword/${keyword}`);
+  return res;
+}

@@ -1,18 +1,26 @@
 <script setup>
-import { ref, reactive } from "vue";
-import { getAttr } from "@/api/product/attr";
-import { getSpuImageList, getSpuHasSaleAttr, addSku } from "@/api/product/spu";
+import { ref, reactive, onMounted } from "vue";
 
-//平台属性
-let attrArr = ref([]);
-//销售属性
-let saleArr = ref([]);
-//照片的数据
-let imgArr = ref([]);
-//获取table组件实例
-let table = ref();
-//收集SKU的参数
-let skuParams = reactive({
+import { getAttr } from "@/api/product/attr";
+import { getSpuImageList, getSpuHasSaleAttr, getSpuInfo, addSku } from "@/api/product/spu";
+
+const props = defineProps({
+  cat1Id: {
+    type: [String, Number],
+    required: true,
+  },
+  cat2Id: {
+    type: [String, Number],
+    required: true,
+  },
+  spuId: {
+    type: [String, Number],
+    required: true,
+  },
+});
+
+// ref reactive
+const skuData = reactive({
   //父组件传递过来的数据
   category3Id: "", //三级分类的ID
   spuId: "", //已有的SPU的ID
@@ -31,32 +39,51 @@ let skuParams = reactive({
   ],
   skuDefaultImg: "", //sku图片地址
 });
+
+//平台属性
+const attrArr = ref([]);
+//销售属性
+const saleArr = ref([]);
+//照片的数据
+const imgArr = ref([]);
+//获取table组件实例
+const table = ref();
+
+// emit
+const emits = defineEmits(["change-scene"]);
+
 //当前子组件的方法对外暴露
-const initSkuData = async (c1Id, c2Id, spu) => {
-  //收集数据
-  skuParams.category3Id = spu.category3Id;
-  skuParams.spuId = spu.id;
-  skuParams.tmId = spu.tmId;
+const initSkuData = async () => {
+  const { cat1Id, cat2Id, spuId } = props;
+
+  const spuRes = await getSpuInfo(spuId);
+  console.log("🚀 ~ file: SkuForm.vue:58 ~ initSkuData ~ spuRes:", spuRes);
+  Object.assign(skuData, spuRes.data, { spuId });
+
   //获取平台属性
-  let result = await getAttr(c1Id, c2Id, spu.category3Id);
+  const attrRes = await getAttr(cat1Id, cat2Id, skuData.category3Id);
+  console.log("🚀 ~ file: SkuForm.vue:63 ~ initSkuData ~ attrRes:", attrRes);
   //获取对应的销售属性
-  let result1 = await getSpuHasSaleAttr(spu.id);
+  const res = await getSpuHasSaleAttr(spuId);
+  console.log("🚀 ~ file: SkuForm.vue:66 ~ initSkuData ~ res:", res);
   //获取照片墙的数据
-  let result2 = await getSpuImageList(spu.id);
+  const imgRes = await getSpuImageList(spuId);
+  console.log("🚀 ~ file: SkuForm.vue:69 ~ initSkuData ~ imgRes:", imgRes);
   //平台属性
-  attrArr.value = result.data;
+  attrArr.value = attrRes.data;
   //销售属性
-  saleArr.value = result1.data;
+  saleArr.value = res.data;
   //图片
-  imgArr.value = result2.data;
-};
-//取消按钮的回调
-const cancel = () => {
-  $emit("changeScene", { flag: 0, params: "" });
+  imgArr.value = imgRes.data;
 };
 
-//设置默认图片的方法回调
-const handler = (row) => {
+// event handler
+
+const handleCancel = () => {
+  emits("change-scene", "view");
+};
+
+const setDefaulImg = (row) => {
   //点击的时候,全部图片的的复选框不勾选
   imgArr.value.forEach((item) => {
     table.value.toggleRowSelection(item, false);
@@ -64,20 +91,14 @@ const handler = (row) => {
   //选中的图片才勾选
   table.value.toggleRowSelection(row, true);
   //收集图片地址
-  skuParams.skuDefaultImg = row.imgUrl;
+  skuData.skuDefaultImg = row.imgUrl;
 };
-//对外暴露方法
-defineExpose({
-  initSkuData,
-});
 
-//保存按钮的方法
-const save = async () => {
-  //整理参数
+const handleSubmit = async () => {
   //平台属性
-  skuParams.skuAttrValueList = attrArr.value.reduce((prev, next) => {
+  skuData.skuAttrValueList = attrArr.value.reduce((prev, next) => {
     if (next.attrIdAndValueId) {
-      let [attrId, valueId] = next.attrIdAndValueId.split(":");
+      const [attrId, valueId] = next.attrIdAndValueId.split(":");
       prev.push({
         attrId,
         valueId,
@@ -85,10 +106,11 @@ const save = async () => {
     }
     return prev;
   }, []);
+
   //销售属性
-  skuParams.skuSaleAttrValueList = saleArr.value.reduce((prev, next) => {
+  skuData.skuSaleAttrValueList = saleArr.value.reduce((prev, next) => {
     if (next.saleIdAndValueId) {
-      let [saleAttrId, saleAttrValueId] = next.saleIdAndValueId.split(":");
+      const [saleAttrId, saleAttrValueId] = next.saleIdAndValueId.split(":");
       prev.push({
         saleAttrId,
         saleAttrValueId,
@@ -96,24 +118,26 @@ const save = async () => {
     }
     return prev;
   }, []);
-  //添加SKU的请求
-  let result = await addSku(skuParams);
-  if (result.code == 200) {
+
+  const res = await addSku(skuData);
+  if (res.code == 200) {
     ElMessage({
       type: "success",
       message: "添加SKU成功",
     });
-    //通知父组件切换场景为零
-    $emit("changeScene", { flag: 0, params: "" });
+    emits("change-scene", "view");
   } else {
     ElMessage({
       type: "error",
-      message: "添加SKU失败",
+      message: res.data || "添加SKU失败",
     });
   }
 };
-//自定义事件的方法
-let $emit = defineEmits(["changeScene"]);
+
+onMounted(() => {
+  console.log(props);
+  initSkuData();
+});
 </script>
 
 <template>
@@ -121,44 +145,44 @@ let $emit = defineEmits(["changeScene"]);
     <el-form-item label="SKU名称">
       <el-input
         placeholder="SKU名称"
-        v-model="skuParams.skuName"
-      ></el-input>
+        v-model="skuData.skuName"
+      />
     </el-form-item>
     <el-form-item label="价格(元)">
       <el-input
         placeholder="价格(元)"
         type="number"
-        v-model="skuParams.price"
-      ></el-input>
+        v-model="skuData.price"
+      />
     </el-form-item>
     <el-form-item label="重量(g)">
       <el-input
         placeholder="重量(g)"
         type="number"
-        v-model="skuParams.weight"
-      ></el-input>
+        v-model="skuData.weight"
+      />
     </el-form-item>
     <el-form-item label="SKU描述">
       <el-input
         placeholder="SKU描述"
         type="textarea"
-        v-model="skuParams.skuDesc"
-      ></el-input>
+        v-model="skuData.skuDesc"
+      />
     </el-form-item>
     <el-form-item label="平台属性">
       <el-form :inline="true">
         <el-form-item
-          v-for="(item, index) in attrArr"
+          v-for="item in attrArr"
           :key="item.id"
           :label="item.attrName"
         >
           <el-select v-model="item.attrIdAndValueId">
             <el-option
-              :value="`${item.id}:${attrValue.id}`"
-              v-for="(attrValue, index) in item.attrValueList"
+              v-for="attrValue in item.attrValueList"
               :key="attrValue.id"
               :label="attrValue.valueName"
-            ></el-option>
+              :value="`${item.id}:${attrValue.id}`"
+            />
           </el-select>
         </el-form-item>
       </el-form>
@@ -166,17 +190,17 @@ let $emit = defineEmits(["changeScene"]);
     <el-form-item label="销售属性">
       <el-form :inline="true">
         <el-form-item
-          :label="item.saleAttrName"
-          v-for="(item, index) in saleArr"
+          v-for="item in saleArr"
           :key="item.id"
+          :label="item.saleAttrName"
         >
           <el-select v-model="item.saleIdAndValueId">
             <el-option
-              :value="`${item.id}:${saleAttrValue.id}`"
-              v-for="(saleAttrValue, index) in item.spuSaleAttrValueList"
+              v-for="saleAttrValue in item.spuSaleAttrValueList"
               :key="saleAttrValue.id"
               :label="saleAttrValue.saleAttrValueName"
-            ></el-option>
+              :value="`${item.id}:${saleAttrValue.id}`"
+            />
           </el-select>
         </el-form-item>
       </el-form>
@@ -184,35 +208,32 @@ let $emit = defineEmits(["changeScene"]);
     <el-form-item label="图片名称">
       <el-table
         border
-        :data="imgArr"
         ref="table"
+        :data="imgArr"
       >
         <el-table-column
           type="selection"
           width="80px"
           align="center"
-        ></el-table-column>
+        />
         <el-table-column label="图片">
           <template #="{ row, $index }">
-            <img
-              :src="row.imgUrl"
-              alt=""
-              style="width: 100px; height: 100px"
-            />
+            <el-image :src="row.imgUrl" />
           </template>
         </el-table-column>
         <el-table-column
           label="名称"
           prop="imgName"
-        ></el-table-column>
+        />
         <el-table-column label="操作">
           <template #="{ row, $index }">
             <el-button
               type="primary"
               size="small"
-              @click="handler(row)"
-              >设置默认</el-button
+              @click="setDefaulImg(row)"
             >
+              设置默认
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -221,15 +242,17 @@ let $emit = defineEmits(["changeScene"]);
       <el-button
         type="primary"
         size="default"
-        @click="save"
-        >保存</el-button
+        @click="handleSubmit"
       >
+        保存
+      </el-button>
       <el-button
         type="primary"
         size="default"
-        @click="cancel"
-        >取消</el-button
+        @click="handleCancel"
       >
+        取消
+      </el-button>
     </el-form-item>
   </el-form>
 </template>

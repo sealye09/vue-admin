@@ -2,11 +2,12 @@
 import { ref, reactive, provide, watch } from "vue";
 import { Icon } from "@iconify/vue";
 
-import { getSpu, removeSpu, getSpuHasSaleAttr } from "@/api/product/spu";
+import { getSpu, removeSpu } from "@/api/product/spu";
 import catSelector from "@/components/catSelector.vue";
 
 import DetailDialog from "./DetailDialog.vue";
 import SpuForm from "./SpuForm.vue";
+import SkuForm from "./SkuForm.vue";
 
 // ref reactive
 const tableData = reactive({
@@ -52,7 +53,7 @@ provide("detailVisible", detailVisible);
 const detailId = ref("");
 provide("detailId", detailId);
 
-const editId = ref("");
+const chosenSpuId = ref("");
 
 watch(
   () => [tableData.currentPage, tableData.pageSize],
@@ -79,11 +80,20 @@ const fetchSpu = async (catId) => {
   tableData.total = res.data.total;
 };
 
-const onAddSku = (index, row) => {
-  console.log("🚀 ~ file: index.vue:52 ~ onAdd ~ index, row", index, row);
+const onAddSku = (_, row) => {
+  chosenSpuId.value = row.id;
+  formMode.value = "sku";
 };
 
 const onAddSpu = () => {
+  if (!selectState.cat3.id) {
+    ElMessage({
+      type: "warning",
+      message: "请先选择三级分类",
+    });
+    return;
+  }
+
   spuMode.value = "add";
   formMode.value = "spu";
 };
@@ -94,7 +104,7 @@ const onView = (_, row) => {
 };
 
 const onEdit = (_, row) => {
-  editId.value = row.id;
+  chosenSpuId.value = row.id;
   spuMode.value = "edit";
   formMode.value = "spu";
 };
@@ -127,26 +137,22 @@ const onDelete = (_, row) => {
       @on-change="handleSelectChange"
     />
 
-    <el-divider></el-divider>
+    <el-divider />
 
     <spu-form
       v-if="formMode === 'spu'"
       :mode="spuMode"
       :cat3-id="selectState.cat3.id"
-      :spu-id="editId"
-      @on-cancel="
-        () => {
-          formMode = 'view';
-        }
-      "
-      @on-submit="
-        (val) => {
-          if (val) {
-            formMode = 'view';
-            fetchSpu(selectState.cat3.id);
-          }
-        }
-      "
+      :spu-id="chosenSpuId"
+      @change-scene="(val) => (formMode = val)"
+    />
+
+    <sku-form
+      v-if="formMode === 'sku'"
+      :cat1-id="selectState.cat1.id"
+      :cat2-id="selectState.cat2.id"
+      :spu-id="chosenSpuId"
+      @change-scene="(val) => (formMode = val)"
     />
 
     <div
