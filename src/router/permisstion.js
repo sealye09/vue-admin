@@ -1,7 +1,8 @@
 import router from "@/router";
 import nprogress from "nprogress";
+import useUserStore from "@/store/modules/userStore";
+
 import "nprogress/nprogress.css";
-import useUserStore from "./store/modules/userStore";
 
 nprogress.configure({ showSpinner: false });
 
