@@ -21,23 +21,18 @@ const props = defineProps({
 
 // ref reactive
 const skuData = reactive({
-  //父组件传递过来的数据
   category3Id: "", //三级分类的ID
   spuId: "", //已有的SPU的ID
   tmId: "", //SPU品牌的ID
-  //v-model收集
   skuName: "", //sku名字
   price: "", //sku价格
   weight: "", //sku重量
   skuDesc: "", //sku的描述
 
-  skuAttrValueList: [
-    //平台属性的收集
-  ],
-  skuSaleAttrValueList: [
-    //销售属性
-  ],
-  skuDefaultImg: "", //sku图片地址
+  skuAttrValueList: [],
+  skuSaleAttrValueList: [],
+  skuImageList: [],
+  skuDefaultImg: "",
 });
 
 //平台属性
@@ -84,10 +79,6 @@ const handleCancel = () => {
 };
 
 const setDefaulImg = (row) => {
-  //点击的时候,全部图片的的复选框不勾选
-  imgArr.value.forEach((item) => {
-    table.value.toggleRowSelection(item, false);
-  });
   //选中的图片才勾选
   table.value.toggleRowSelection(row, true);
   //收集图片地址
@@ -118,6 +109,14 @@ const handleSubmit = async () => {
     }
     return prev;
   }, []);
+
+  // skuImageList
+  skuData.skuImageList = imgArr.value.map((item) => {
+    return {
+      imgUrl: item.imgUrl,
+      imgName: item.imgName,
+    };
+  });
 
   const res = await addSku(skuData);
   if (res.code == 200) {
@@ -228,7 +227,7 @@ onMounted(() => {
         <el-table-column label="操作">
           <template #="{ row, $index }">
             <el-button
-              type="primary"
+              :type="skuData.skuDefaultImg == row.imgUrl ? 'success' : null"
               size="small"
               @click="setDefaulImg(row)"
             >
