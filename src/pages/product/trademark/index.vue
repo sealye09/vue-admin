@@ -3,8 +3,9 @@ import { ref, computed, watch, onMounted, reactive, provide } from "vue";
 import { toString } from "lodash";
 
 import { getTrademarks, removeTrademark } from "@/api/product/trademark.js";
-import dataTable from "@/components/dataTable.vue";
-import addDialog from "./addDialog.vue";
+import DataTable from "@/components/DataTable.vue";
+
+import AddDialog from "./AddDialog.vue";
 import editDialog from "./editDialog.vue";
 
 const tableData = reactive({

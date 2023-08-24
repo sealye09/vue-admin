@@ -2,10 +2,10 @@
 import { reactive, computed, onMounted, ref, watch, provide } from "vue";
 import { toString } from "lodash";
 import { getUsers, deleteUserById, deleteUsersByIds, getUserRoles } from "@/api/acl/user.js";
-import dataTable from "@/components/dataTable.vue";
+import DataTable from "@/components/DataTable.vue";
 
-import addDialog from "./addDialog.vue";
-import editDrawer from "./editDrawer.vue";
+import AddDialog from "./AddDialog.vue";
+import EditDrawer from "./EditDrawer.vue";
 
 // ref reactive
 const tableData = reactive({

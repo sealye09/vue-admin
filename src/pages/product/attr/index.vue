@@ -2,8 +2,8 @@
 import { reactive, ref } from "vue";
 import { getAttr, addOrUpdateAttr, removeAttr } from "@/api/product/attr.js";
 
-import catSelector from "@/components/catSelector.vue";
-import dataTable from "@/components/dataTable.vue";
+import CatSelector from "@/components/CatSelector.vue";
+import DataTable from "@/components/DataTable.vue";
 
 const selectState = reactive({
   cat1: { id: "", name: "" },

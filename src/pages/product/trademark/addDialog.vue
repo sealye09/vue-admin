@@ -36,7 +36,6 @@ const handleSubmit = (formRef) => {
   formRef.validate(async (valid) => {
     if (valid) {
       const res = await addTrademark(addDialogValue);
-      console.log("🚀 ~ file: addDialog.vue:31 ~ formRef.validate ~ res:", res);
 
       if (res.code === 200) {
         ElMessage({

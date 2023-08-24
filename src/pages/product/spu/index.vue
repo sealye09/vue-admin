@@ -3,7 +3,7 @@ import { ref, reactive, provide, watch } from "vue";
 import { Icon } from "@iconify/vue";
 
 import { getSpu, removeSpu } from "@/api/product/spu";
-import catSelector from "@/components/catSelector.vue";
+import CatSelector from "@/components/CatSelector.vue";
 
 import DetailDialog from "./DetailDialog.vue";
 import SpuForm from "./SpuForm.vue";

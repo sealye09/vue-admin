@@ -13,7 +13,7 @@ const skuInfo = reactive({
 const fetchSkuInfo = async () => {
   if (!detailId) return;
   const res = await getSkuInfo(detailId.value);
-  console.log("🚀 ~ file: detailDialog.vue:35 ~ fetchSkuInfo ~ res:", res);
+  console.log("fetchSkuInfo ~ res:", res);
   Object.assign(skuInfo, res.data);
 };
 

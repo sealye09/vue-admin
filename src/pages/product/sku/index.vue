@@ -4,7 +4,7 @@ import { Icon } from "@iconify/vue";
 
 import { onSaleSku, getSkuList, removeSku, cancelSale } from "@/api/product/sku";
 
-import detailDialog from "./detailDialog.vue";
+import DetailDialog from "./DetailDialog.vue";
 
 // ref reactive
 const tableData = reactive({

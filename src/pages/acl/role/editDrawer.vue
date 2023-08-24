@@ -65,7 +65,7 @@ const handleAssignPermission = async () => {
     // FIX: 半选状态下，需要把半选的也传过去，否则过滤路由时子路由读取不到
     permissionIdList: [...treeRef.value.getCheckedKeys(), ...treeRef.value.getHalfCheckedKeys()],
   });
-  console.log("🚀 ~ file: editDrawer.vue:66 ~ handleAssignPermission ~ res:", res);
+
   if (res.code === 200) {
     ElMessage({
       type: "success",
