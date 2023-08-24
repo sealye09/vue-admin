@@ -117,6 +117,10 @@ const onView = (index, row) => {
 
 const onEdit = (index, row) => {
   console.log("🚀 ~ file: index.vue:52 ~ onEdit ~ index, row", index, row);
+  ElMessage({
+    type: "warning",
+    message: "开发中...",
+  });
 };
 
 const onDelete = async (_, data) => {
