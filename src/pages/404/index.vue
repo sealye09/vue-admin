@@ -1,7 +1,10 @@
 <script setup>
 import { useRouter } from "vue-router";
+
 import notFoundImg from "@/assets/images/404.png";
+
 const router = useRouter();
+
 const goHome = () => {
   router.push("/");
 };

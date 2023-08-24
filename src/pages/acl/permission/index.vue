@@ -1,11 +1,12 @@
 <script setup>
+import { ref, reactive, onMounted } from "vue";
+
 import {
   getPermissions,
   updatePermission,
   addPermission,
   removePermissionById,
 } from "@/api/acl/menu.js";
-import { ref, reactive, onMounted } from "vue";
 
 const data = reactive({
   permissions: [],

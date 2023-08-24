@@ -79,7 +79,7 @@ export const asyncRoutes = [
       title: "权限管理",
       icon: "heroicons:key",
     },
-    component: () => import("@/layout/index.vue"),
+    component: Layout,
     redirect: "/acl/user",
     children: [
       {
@@ -164,7 +164,7 @@ export const asyncRoutes = [
       title: "商品管理",
       icon: "heroicons:shopping-bag",
     },
-    component: () => import("@/layout/index.vue"),
+    component: Layout,
     redirect: "/product/trademark",
     children: [
       {

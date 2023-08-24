@@ -1,9 +1,11 @@
 <script setup>
 import { ref, computed } from "vue";
-import useAppStore from "@/store/modules/appStore.js";
 import { useRouter } from "vue-router";
+
+import useAppStore from "@/store/modules/appStore";
+import useUserStore from "@/store/modules/userStore";
+
 import Menu from "./Menu.vue";
-import useUserStore from "../store/modules/userStore";
 
 const router = useRouter();
 const props = defineProps({

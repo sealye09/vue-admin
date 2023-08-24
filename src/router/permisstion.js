@@ -1,5 +1,6 @@
-import router from "@/router";
 import nprogress from "nprogress";
+
+import router from "@/router";
 import useUserStore from "@/store/modules/userStore";
 
 import "nprogress/nprogress.css";

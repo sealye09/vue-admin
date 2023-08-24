@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { getAttr, addOrUpdateAttr, removeAttr } from "@/api/product/attr.js";
 
+import { getAttr, addOrUpdateAttr, removeAttr } from "@/api/product/attr.js";
 import CatSelector from "@/components/CatSelector.vue";
 import DataTable from "@/components/DataTable.vue";
 

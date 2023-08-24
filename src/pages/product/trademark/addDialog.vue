@@ -6,6 +6,7 @@ import { addTrademark } from "@/api/product/trademark.js";
 
 const visible = inject("addDialogVisible");
 const onClose = inject("onAddDialogClose");
+
 const emits = defineEmits(["on-submit"]);
 
 const addDialogValue = reactive({

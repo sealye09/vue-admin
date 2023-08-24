@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, inject, watch } from "vue";
+
 import { getSkuInfo } from "@/api/product/sku";
 
 const visible = inject("detailVisible");

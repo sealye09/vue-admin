@@ -3,7 +3,7 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 
-import useUserStore from "@/store/modules/userStore.js";
+import useUserStore from "@/store/modules/userStore";
 
 const userInfo = reactive({
   username: "admin",

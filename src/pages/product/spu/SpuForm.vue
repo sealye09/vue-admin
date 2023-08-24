@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, reactive } from "vue";
 import { Icon } from "@iconify/vue";
+
 import {
   getAllTradeMark,
   getSpuImageList,

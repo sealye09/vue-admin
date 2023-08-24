@@ -3,9 +3,11 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { Icon } from "@iconify/vue";
-import useAppStore from "@/store/modules/appStore.js";
+
+import useAppStore from "@/store/modules/appStore";
+import useUserStore from "@/store/modules/userStore";
+
 import SideBar from "./SideBar.vue";
-import useUserStore from "../store/modules/userStore";
 import BreadCrumb from "./BreadCrumb.vue";
 
 const router = useRouter();
