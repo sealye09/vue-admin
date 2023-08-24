@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from "vue";
 
 import { getAttr } from "@/api/product/attr";
-import { getSpuImageList, getSpuHasSaleAttr, getSpuInfo, addSku } from "@/api/product/spu";
+import { getSpuInfo, addSku } from "@/api/product/spu";
 
 const props = defineProps({
   cat1Id: {
@@ -47,7 +47,6 @@ const table = ref();
 // emit
 const emits = defineEmits(["change-scene"]);
 
-//当前子组件的方法对外暴露
 const initSkuData = async () => {
   const { cat1Id, cat2Id, spuId } = props;
 
@@ -58,18 +57,13 @@ const initSkuData = async () => {
   //获取平台属性
   const attrRes = await getAttr(cat1Id, cat2Id, skuData.category3Id);
   console.log("🚀 ~ file: SkuForm.vue:63 ~ initSkuData ~ attrRes:", attrRes);
-  //获取对应的销售属性
-  const res = await getSpuHasSaleAttr(spuId);
-  console.log("🚀 ~ file: SkuForm.vue:66 ~ initSkuData ~ res:", res);
-  //获取照片墙的数据
-  const imgRes = await getSpuImageList(spuId);
-  console.log("🚀 ~ file: SkuForm.vue:69 ~ initSkuData ~ imgRes:", imgRes);
+
   //平台属性
   attrArr.value = attrRes.data;
   //销售属性
-  saleArr.value = res.data;
+  saleArr.value = spuRes.data.spuSaleAttrList;
   //图片
-  imgArr.value = imgRes.data;
+  imgArr.value = spuRes.data.spuImageList;
 };
 
 // event handler

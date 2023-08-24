@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, inject, watch } from "vue";
+import { reactive, inject, watch } from "vue";
 import { getSkuInfo } from "@/api/product/sku";
 
 const visible = inject("detailVisible");
@@ -104,5 +104,3 @@ watch(
     </el-row>
   </el-dialog>
 </template>
-
-<style scoped></style>
