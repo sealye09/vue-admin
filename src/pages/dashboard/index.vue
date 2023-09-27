@@ -43,9 +43,6 @@ const chartsData = reactive({
   },
   age: {},
 });
-const productsData = reactive([]);
-const salesData = reactive([]);
-const ageData = reactive([]);
 
 const init = async () => {
   const productsRes = await getProducts();

@@ -1,3 +1,7 @@
+/**
+ * 首页的数据接口 mock
+ */
+
 import request from "@/utils/request";
 
 export function getProducts() {

@@ -1,7 +1,15 @@
-<script setup></script>
+<script setup>
+import Seller from "./Seller.vue";
+// import Rank from "./Rank.vue";
+import Trend from "./Trend.vue";
+</script>
 
 <template>
-  <span class="text-xl text-amber-600 hover:text-orange-600/80">Screen</span>
+  <div class="w-full h-full">
+    <!-- <seller /> -->
+    <trend />
+    <!-- <rank /> -->
+  </div>
 </template>
 
 <style scoped></style>
