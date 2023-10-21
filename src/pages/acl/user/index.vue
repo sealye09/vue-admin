@@ -240,6 +240,8 @@ onMounted(async () => {
     <div class="space-y-6">
       <div class="flex gap-2">
         <el-button
+          v-permission:is-disabled="'btn.User.add'"
+          disabled
           type="primary"
           @click="() => (addDialogVisible = true)"
         >

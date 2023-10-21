@@ -128,3 +128,11 @@ onMounted(async () => {
     </el-select>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.el-input {
+  .el-input--suffix {
+    z-index: 50;
+  }
+}
+</style>

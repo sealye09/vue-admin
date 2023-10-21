@@ -33,6 +33,7 @@ const useUserStore = defineStore({
     info: null,
     token: null,
     menu: null,
+    buttons: null,
   }),
 
   actions: {
@@ -55,6 +56,7 @@ const useUserStore = defineStore({
           avatar: res.data.avatar,
           roles: res.data.roles,
         };
+        this.buttons = res.data.buttons;
         console.log("服务端路由：", res.data.routes);
         console.log("本地全量路由：", asyncRoutes);
         //计算当前用户需要展示的异步路由
@@ -81,6 +83,10 @@ const useUserStore = defineStore({
       this.token = null;
       this.info = null;
       this.menu = null;
+    },
+
+    hasButton(btn) {
+      return this.buttons.includes(btn);
     },
   },
   persist: {
