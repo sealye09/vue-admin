@@ -247,12 +247,20 @@ onMounted(async () => {
         >
           添加用户
         </el-button>
-        <el-button
+        <!-- <el-button
+          v-permission:is-disabled="'btn.User.remove'"
           type="danger"
           @click="handleDeleteManyUsers"
         >
           批量删除
-        </el-button>
+        </el-button> -->
+        <auth-button
+          type="danger"
+          button="btn.User.remove"
+          @click="handleDeleteManyUsers"
+        >
+          批量删除
+        </auth-button>
       </div>
 
       <data-table
