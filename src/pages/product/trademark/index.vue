@@ -6,7 +6,7 @@ import { getTrademarks, removeTrademark } from "@/api/product/trademark.js";
 import DataTable from "@/components/DataTable.vue";
 
 import AddDialog from "./AddDialog.vue";
-import editDialog from "./editDialog.vue";
+import editDialog from "./EditDialog.vue";
 
 const tableData = reactive({
   data: [],
@@ -44,17 +44,8 @@ const tableData = reactive({
 });
 
 const addDialogVisible = ref(false);
-const onAddDialogClose = () => {
-  addDialogVisible.value = false;
-};
-
-provide("addDialogVisible", addDialogVisible);
-provide("onAddDialogClose", onAddDialogClose);
 
 const editDialogVisible = ref(false);
-const onEditDialogClose = () => {
-  editDialogVisible.value = false;
-};
 const editDialogValue = reactive({
   tmName: "",
   logoUrl: "",
@@ -63,8 +54,6 @@ const editDialogValue = reactive({
   previewUrl: "",
 });
 
-provide("editDialogVisible", editDialogVisible);
-provide("onEditDialogClose", onEditDialogClose);
 provide("editDialogValue", editDialogValue);
 
 const filters = reactive({
@@ -130,9 +119,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <add-dialog @on-submit="fetchData" />
+  <add-dialog
+    v-model="addDialogVisible"
+    @on-submit="fetchData"
+  />
 
-  <edit-dialog @on-submit="fetchData" />
+  <edit-dialog
+    v-model="editDialogVisible"
+    @on-submit="fetchData"
+  />
 
   <div class="space-y-8">
     <div class="w-full flex justify-center items-center gap-12">

@@ -1,10 +1,29 @@
 <script setup>
-import { reactive, inject, watch } from "vue";
+import { reactive, computed, watch } from "vue";
 
 import { getSkuList } from "@/api/product/spu";
 
-const visible = inject("detailVisible");
-const detailId = inject("detailId");
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+  detailId: {
+    type: Number,
+    required: true,
+  },
+});
+
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val) {
+    emits("update:modelValue", val);
+  },
+});
+
+const emits = defineEmits(["update:modelValue"]);
 
 // reactive ref
 const skuInfo = reactive({
@@ -12,8 +31,8 @@ const skuInfo = reactive({
 });
 
 const fetchSkuInfo = async () => {
-  if (!detailId) return;
-  const res = await getSkuList(detailId.value);
+  if (!props.detailId) return;
+  const res = await getSkuList(props.detailId);
   console.log("fetchSkuInfo ~ res:", res);
   Object.assign(skuInfo.data, res.data);
 };
@@ -23,7 +42,7 @@ const handleClose = () => {
 };
 
 watch(
-  () => detailId.value,
+  () => props.detailId,
   async (newVal, oldVal) => {
     if (newVal) {
       fetchSkuInfo();

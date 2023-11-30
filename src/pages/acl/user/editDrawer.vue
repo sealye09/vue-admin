@@ -1,19 +1,33 @@
 <script setup>
-import { ref, inject, onMounted } from "vue";
+import { ref, inject, onMounted, computed } from "vue";
 import { toString } from "lodash";
 
 import { updateUserById, assignRole } from "@/api/acl/user.js";
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+});
+
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val) {
+    emits("update:modelValue", val);
+  },
+});
 
 // ref
 const userFormRef = ref();
 
 // inject
-const visible = inject("editDrawerVisible");
-const onClose = inject("onEditDrawerClose");
 const editDrawerValue = inject("editDrawerValue");
 
 // emits
-const emits = defineEmits(["on-submit"]);
+const emits = defineEmits(["on-submit", "update:modelValue"]);
 
 // variables
 const rules = {
@@ -37,7 +51,7 @@ const rules = {
 
 // handlers
 const handleClose = () => {
-  onClose();
+  visible.value = false;
   editDrawerValue.mode = "info";
 };
 
@@ -57,7 +71,7 @@ const handleEditUserConfirm = async (formRef) => {
           type: "success",
           message: "更新成功",
         });
-        onClose();
+        visible.value = false;
         emits("on-submit");
       } else {
         ElMessage({
@@ -106,7 +120,7 @@ const handleRoleChangeComfirm = async () => {
       type: "success",
       message: "更新成功",
     });
-    onClose();
+    visible.value = false;
     emits("on-submit");
   } else {
     ElMessage({

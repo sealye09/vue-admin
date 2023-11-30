@@ -1,9 +1,16 @@
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, computed } from "vue";
 import { toString } from "lodash";
 
 import { updateRoleById } from "@/api/acl/role.js";
 import { assignAcl } from "@/api/acl/menu.js";
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+});
 
 // ref reactive
 const editRoleForm = ref();
@@ -11,11 +18,18 @@ const treeRef = ref();
 
 // provide inject
 const editDrawerValue = inject("editDrawerValue");
-const visible = inject("editDrawerVisible");
-const onClose = inject("onEditDrawerClose");
 
 // emits
-const emits = defineEmits(["on-submit"]);
+const emits = defineEmits(["on-submit", "update:modelValue"]);
+
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val) {
+    emits("update:modelValue", val);
+  },
+});
 
 // variables
 const rules = {
@@ -30,7 +44,7 @@ const rules = {
   ],
 };
 
-const props = {
+const treeProps = {
   label: "name",
   children: "children",
 };
@@ -47,7 +61,7 @@ const handleEditRole = async (formRef) => {
         type: "success",
         message: "修改成功",
       });
-      onClose();
+      visible.value = false;
       emits("on-submit");
     } else {
       ElMessage({
@@ -72,7 +86,7 @@ const handleAssignPermission = async () => {
       type: "success",
       message: "分配权限成功",
     });
-    onClose();
+    visible.value = false;
     emits("on-submit");
   } else {
     ElMessage({
@@ -91,7 +105,7 @@ const handleSubmit = (formRef) => {
 };
 
 const handleClose = () => {
-  onClose();
+  visible.value = false;
   editDrawerValue.mode = "info";
 };
 </script>
@@ -156,7 +170,7 @@ const handleClose = () => {
           node-key="id"
           :data="editDrawerValue.permissions"
           :default-checked-keys="editDrawerValue.selectedPermissions"
-          :props="props"
+          :props="treeProps"
         />
       </div>
     </template>

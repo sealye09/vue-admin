@@ -1,8 +1,15 @@
 <script setup>
-import { ref, reactive, inject, nextTick } from "vue";
+import { ref, reactive, computed, nextTick } from "vue";
 import { toString } from "lodash";
 
 import { addUser } from "@/api/acl/user.js";
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+});
 
 // reactive
 const dialogValue = reactive({
@@ -14,12 +21,17 @@ const dialogValue = reactive({
 // ref
 const addUserForm = ref();
 
-// inject
-const visible = inject("addDialogVisible");
-const onClose = inject("onAddDialogClose");
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val) {
+    emits("update:modelValue", val);
+  },
+});
 
 // emits
-const emits = defineEmits(["on-submit"]);
+const emits = defineEmits(["on-submit", "update:modelValue"]);
 
 // variables
 const rules = {
@@ -63,7 +75,7 @@ const handleAdd = async (formRef) => {
         message: "添加成功",
       });
       // 关闭对话框
-      onClose();
+      visible.value = false;
       emits("on-submit");
     } else {
       ElMessage({
@@ -81,7 +93,7 @@ const handleAdd = async (formRef) => {
 };
 
 const handleCancel = () => {
-  onClose();
+  visible.value = false;
   nextTick(() => {
     // 清空
     Object.assign(dialogValue, defaultValues);

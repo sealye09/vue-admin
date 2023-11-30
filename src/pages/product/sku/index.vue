@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, watch, provide } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { Icon } from "@iconify/vue";
 
 import { onSaleSku, getSkuList, removeSku, cancelSale } from "@/api/product/sku";
@@ -59,8 +59,6 @@ const tableData = reactive({
 
 const detailVisible = ref(false);
 const detailId = ref("");
-provide("detailVisible", detailVisible);
-provide("detailId", detailId);
 
 // 获取sku列表
 const fetchSkuList = async () => {
@@ -154,7 +152,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <detail-dialog />
+  <detail-dialog
+    v-model="detailVisible"
+    :detail-id="detailId"
+  />
 
   <data-table
     :data="tableData.data"

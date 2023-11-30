@@ -45,12 +45,6 @@ const tableData = reactive({
 });
 
 const addDialogVisible = ref(false);
-const onAddDialogClose = () => {
-  addDialogVisible.value = false;
-};
-
-provide("addDialogVisible", addDialogVisible);
-provide("onAddDialogClose", onAddDialogClose);
 
 const editDrawerValue = reactive({
   mode: "info",
@@ -60,13 +54,8 @@ const editDrawerValue = reactive({
   selectedPermissions: [],
 });
 const editDrawerVisible = ref(false);
-const onEditDrawerClose = () => {
-  editDrawerVisible.value = false;
-};
 
 provide("editDrawerValue", editDrawerValue);
-provide("editDrawerVisible", editDrawerVisible);
-provide("onEditDrawerClose", onEditDrawerClose);
 
 const selectedRows = ref([]);
 
@@ -192,9 +181,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <add-dialog @on-submit="fetchData" />
+  <add-dialog
+    v-model="addDialogVisible"
+    @on-submit="fetchData"
+  />
 
-  <edit-drawer @on-submit="fetchData" />
+  <edit-drawer
+    v-model="editDrawerVisible"
+    @on-submit="fetchData"
+  />
 
   <div class="space-y-8">
     <div class="w-full flex justify-center items-center gap-12">

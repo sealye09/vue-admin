@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, provide, watch } from "vue";
+import { ref, reactive, watch } from "vue";
 import { Icon } from "@iconify/vue";
 
 import { getSpu, removeSpu } from "@/api/product/spu";
@@ -49,9 +49,7 @@ const formMode = ref("view");
 const spuMode = ref("add");
 
 const detailVisible = ref(false);
-provide("detailVisible", detailVisible);
 const detailId = ref("");
-provide("detailId", detailId);
 
 const chosenSpuId = ref("");
 
@@ -129,7 +127,10 @@ const onDelete = (_, row) => {
 </script>
 
 <template>
-  <detail-dialog />
+  <detail-dialog
+    v-model="detailVisible"
+    :detail-id="detailId"
+  />
 
   <div class="space-y-8 min-h-[70vh]">
     <cat-selector

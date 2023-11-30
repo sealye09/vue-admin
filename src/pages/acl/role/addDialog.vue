@@ -1,8 +1,15 @@
 <script setup>
-import { ref, reactive, nextTick, inject } from "vue";
+import { ref, reactive, nextTick, computed } from "vue";
 import { toString } from "lodash";
 
 import { addRole } from "@/api/acl/role.js";
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+});
 
 // ref reactive
 const addDialogValue = reactive({
@@ -11,12 +18,17 @@ const addDialogValue = reactive({
 
 const addRoleFormRef = ref();
 
-// provide inject
-const visible = inject("addDialogVisible");
-const onClose = inject("onAddDialogClose");
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val) {
+    emits("update:modelValue", val);
+  },
+});
 
 // emits
-const emits = defineEmits(["on-submit"]);
+const emits = defineEmits(["on-submit", "update:modelValue"]);
 
 // variables
 const rules = {
@@ -56,7 +68,7 @@ const handleAddRole = async (formRef) => {
 };
 
 const handleClose = () => {
-  onClose();
+  visible.value = false;
   nextTick(() => {
     // 清空
     addRoleFormRef.value.clearValidate();

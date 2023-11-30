@@ -1,13 +1,26 @@
 <script setup>
-import { ref, reactive, inject } from "vue";
+import { ref, reactive, computed } from "vue";
 import { Icon } from "@iconify/vue";
 
 import { addTrademark } from "@/api/product/trademark.js";
 
-const visible = inject("addDialogVisible");
-const onClose = inject("onAddDialogClose");
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+});
 
-const emits = defineEmits(["on-submit"]);
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val) {
+    emits("update:modelValue", val);
+  },
+});
+
+const emits = defineEmits(["on-submit", "update:modelValue"]);
 
 const addDialogValue = reactive({
   tmName: "",
@@ -44,7 +57,6 @@ const handleSubmit = (formRef) => {
           type: "success",
         });
         handleClose();
-        formRef.resetFields();
         emits("on-submit");
       } else {
         ElMessage({
@@ -63,7 +75,7 @@ const handleSubmit = (formRef) => {
 };
 
 const handleClose = () => {
-  onClose();
+  visible.value = false;
   Object.assign(addDialogValue, defaultForm);
   formRef.value.resetFields();
 };
@@ -107,66 +119,68 @@ const handlePreview = (file) => {
 </script>
 
 <template>
-  <el-dialog v-model="addDialogValue.preview">
-    <img
-      w-full
-      :src="addDialogValue.previewUrl"
-      alt="预览"
-    />
-  </el-dialog>
+  <div>
+    <el-dialog v-model="addDialogValue.preview">
+      <img
+        w-full
+        :src="addDialogValue.previewUrl"
+        alt="预览"
+      />
+    </el-dialog>
 
-  <el-dialog
-    width="40%"
-    title="添加品牌"
-    v-model="visible"
-    :close-on-click-modal="false"
-    @close="handleClose"
-  >
-    <el-form
-      :rules="rules"
-      :model="addDialogValue"
-      label-position="right"
-      label-width="100px"
-      @keydown.enter.native="handleSubmit(formRef)"
-      @submit.enter.prevent
-      ref="formRef"
+    <el-dialog
+      width="40%"
+      title="添加品牌"
+      v-model="visible"
+      :close-on-click-modal="true"
+      @close="handleClose"
     >
-      <el-form-item
-        prop="tmName"
-        label="品牌名称"
-        required
-      >
-        <div class="w-4/5"><el-input v-model="addDialogValue.tmName" /></div>
-      </el-form-item>
-
-      <el-form-item
-        label="品牌LOGO"
+      <el-form
+        :rules="rules"
+        :model="addDialogValue"
+        label-position="right"
         label-width="100px"
-        prop="logoUrl"
+        @keydown.enter.native="handleSubmit(formRef)"
+        @submit.enter.prevent
+        ref="formRef"
       >
-        <el-upload
-          action="/api/admin/product/fileUpload"
-          list-type="picture-card"
-          :file-list="addDialogValue.fileList"
-          :on-preview="handlePreview"
-          :before-upload="beforeUpload"
-          :on-success="handleUploadSuccess"
+        <el-form-item
+          prop="tmName"
+          label="品牌名称"
+          required
         >
-          <el-icon><Icon icon="heroicons:plus" /></el-icon>
-        </el-upload>
-      </el-form-item>
+          <div class="w-4/5"><el-input v-model="addDialogValue.tmName" /></div>
+        </el-form-item>
 
-      <el-form-item>
-        <span class="dialog-footer">
-          <el-button @click="handleClose">取消</el-button>
-          <el-button
-            type="primary"
-            @click="handleSubmit(formRef)"
+        <el-form-item
+          label="品牌LOGO"
+          label-width="100px"
+          prop="logoUrl"
+        >
+          <el-upload
+            action="/api/admin/product/fileUpload"
+            list-type="picture-card"
+            :file-list="addDialogValue.fileList"
+            :on-preview="handlePreview"
+            :before-upload="beforeUpload"
+            :on-success="handleUploadSuccess"
           >
-            添加
-          </el-button>
-        </span>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+            <el-icon><Icon icon="heroicons:plus" /></el-icon>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item>
+          <span class="dialog-footer">
+            <el-button @click="handleClose">取消</el-button>
+            <el-button
+              type="primary"
+              @click="handleSubmit(formRef)"
+            >
+              添加
+            </el-button>
+          </span>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>

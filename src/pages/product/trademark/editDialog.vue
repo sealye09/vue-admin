@@ -1,16 +1,28 @@
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, computed } from "vue";
 import { Icon } from "@iconify/vue";
 
 import { updateTrademark } from "@/api/product/trademark";
 
-const editRoleForm = ref();
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+});
 
-const visible = inject("editDialogVisible");
-const onClose = inject("onEditDialogClose");
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val) {
+    emits("update:modelValue", val);
+  },
+});
+
 const editDialogValue = inject("editDialogValue");
 
-const emits = defineEmits(["on-submit"]);
+const emits = defineEmits(["on-submit", "update:modelValue"]);
 
 const formRef = ref(null);
 
@@ -32,8 +44,7 @@ const handleSubmit = (formRef) => {
           message: "修改成功",
           type: "success",
         });
-        onClose();
-        formRef.resetFields();
+        handleClose();
         emits("on-submit");
       } else {
         ElMessage({
@@ -49,6 +60,11 @@ const handleSubmit = (formRef) => {
       return false;
     }
   });
+};
+
+const handleClose = () => {
+  visible.value = false;
+  formRef.value.resetFields();
 };
 
 //上传图片组件 -> 上传图片之前触发的钩子函数
@@ -90,66 +106,68 @@ const handlePreview = (file) => {
 </script>
 
 <template>
-  <el-dialog v-model="editDialogValue.preview">
-    <img
-      w-full
-      :src="editDialogValue.previewUrl"
-      alt="预览"
-    />
-  </el-dialog>
+  <div>
+    <el-dialog v-model="editDialogValue.preview">
+      <img
+        w-full
+        :src="editDialogValue.previewUrl"
+        alt="预览"
+      />
+    </el-dialog>
 
-  <el-dialog
-    width="40%"
-    title="修改品牌信息"
-    v-model="visible"
-    :close-on-click-modal="false"
-    @close="onClose"
-  >
-    <el-form
-      :rules="rules"
-      :model="editDialogValue"
-      label-position="right"
-      label-width="100px"
-      @keydown.enter.native="handleSubmit(editRoleForm)"
-      @submit.enter.prevent
-      ref="editRoleForm"
+    <el-dialog
+      width="40%"
+      title="修改品牌信息"
+      v-model="visible"
+      :close-on-click-modal="true"
+      @close="handleClose"
     >
-      <el-form-item
-        prop="tmName"
-        label="品牌名称"
-        required
-      >
-        <div class="w-4/5"><el-input v-model="editDialogValue.tmName" /></div>
-      </el-form-item>
-
-      <el-form-item
-        label="品牌LOGO"
+      <el-form
+        :rules="rules"
+        :model="editDialogValue"
+        label-position="right"
         label-width="100px"
-        prop="logoUrl"
+        @keydown.enter.native="handleSubmit(formRef)"
+        @submit.enter.prevent
+        ref="formRef"
       >
-        <el-upload
-          action="/api/admin/product/fileUpload"
-          list-type="picture-card"
-          :file-list="editDialogValue.fileList"
-          :on-preview="handlePreview"
-          :before-upload="beforeUpload"
-          :on-success="handleUploadSuccess"
+        <el-form-item
+          prop="tmName"
+          label="品牌名称"
+          required
         >
-          <el-icon><Icon icon="heroicons:plus" /></el-icon>
-        </el-upload>
-      </el-form-item>
+          <div class="w-4/5"><el-input v-model="editDialogValue.tmName" /></div>
+        </el-form-item>
 
-      <el-form-item>
-        <span class="dialog-footer">
-          <el-button @click="onClose">取消</el-button>
-          <el-button
-            type="primary"
-            @click="handleSubmit(editRoleForm)"
+        <el-form-item
+          label="品牌LOGO"
+          label-width="100px"
+          prop="logoUrl"
+        >
+          <el-upload
+            action="/api/admin/product/fileUpload"
+            list-type="picture-card"
+            :file-list="editDialogValue.fileList"
+            :on-preview="handlePreview"
+            :before-upload="beforeUpload"
+            :on-success="handleUploadSuccess"
           >
-            修改
-          </el-button>
-        </span>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+            <el-icon><Icon icon="heroicons:plus" /></el-icon>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item>
+          <span class="dialog-footer">
+            <el-button @click="handleClose">取消</el-button>
+            <el-button
+              type="primary"
+              @click="handleSubmit(formRef)"
+            >
+              修改
+            </el-button>
+          </span>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>
